@@ -1,0 +1,2 @@
+insert all airports airports.txt append
+insert all flight flights.txt append
