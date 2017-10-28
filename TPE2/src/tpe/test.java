@@ -73,7 +73,7 @@ public class test {
 				red.removeFlight(air, number);
 			} else if (command.length() == 18 && command.toLowerCase().substring(0, 18).equals("delete all flight")) {
 				red.clearFlights();
-			} else if (command.toLowerCase().substring(0, 10).equals("findRoute ")) {
+			} else if (command.length() > 11 && command.substring(0, 10).equals("findRoute ")) {
 				String characteristics = command.substring(10);
 				String[] c = characteristics.split(" ");
 
@@ -81,24 +81,24 @@ public class test {
 				String to = checkName(c[1]);
 				String priority = checkPriority(c[2]);
 				List<String> days = checkDays(c[3]);
-
+				
 				red.findRoute(from, to, priority, days);
-			} else if (command.toLowerCase().substring(0, 13).equals("outputFormat ")) {
-				String characteristics = command.substring(10);
+			} else if (command.length() > 14 && command.substring(0, 13).equals("outputFormat ")) {
+				String characteristics = command.substring(13);
 				String[] c = characteristics.split(" ");
 
 				String type = checkType(c[0]);
 				String output = checkOutput(c[1]);
-
+				
 				// LLAMAR A KML.. Tener una funcion wrapper y chequear que los parametros no sean null
 				//Si son null tirar invalid command, y sino llamar a la funcion q corrresponda(privada)
-			} else if (command.toLowerCase().substring(0, 10).equals("worldTrip ")) {
+			} else if (command.length() > 11 && command.substring(0, 10).equals("worldTrip ")) {
 				String characteristics = command.substring(10);
 				String[] c = characteristics.split(" ");
 
 				String from = checkName(c[0]);
 				String priority = checkPriority(c[1]);
-				List<String> days = checkDays(c[3]);
+				List<String> days = checkDays(c[2]);
 				
 				// red.worldTrip(from, priority, days) 
 				// Tener una funcion wrapper y chequear que los parametros no sean null
@@ -196,7 +196,7 @@ public class test {
 	}
 
 	public static String checkFile(String file) {
-		String PATTERN_FILE = "^[a-z0-9]+.txt$";
+		String PATTERN_FILE = "^[a-zA-Z0-9]+.txt$";
 		Pattern pattern = Pattern.compile(PATTERN_FILE);
 
 		Matcher matcher = pattern.matcher(file);
