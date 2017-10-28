@@ -1,8 +1,10 @@
 package tpe;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.io.InputStreamReader;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Scanner;
@@ -18,93 +20,171 @@ public class test {
 
 		while (scan.hasNext()) {
 			String command = scan.nextLine();
-			
+
 			if (command.toLowerCase().equals("exit"))
 				break;
 
 			if (command.length() > 16 && command.toLowerCase().substring(0, 15).equals("insert airport ")) {
 				String characteristics = command.substring(15);
 				String[] c = characteristics.split(" ");
+				if (c.length == 3) {
+					String name = checkName(c[0]);
+					Double latitude = checkLatitude(c[1]);
+					Double length = checkLength(c[2]);
 
-				String name = checkName(c[0]);
-				Double latitude = checkLatitude(c[1]);
-				Double length = checkLength(c[2]);
-				
-				red.addAirport(name, latitude, length);
+					red.addAirport(name, latitude, length);
+				} else {
+					System.out.println(
+							"Invalid Command: You are inserting a different amount of parameters than the required");
+				}
 			} else if (command.length() > 21 && command.toLowerCase().substring(0, 20).equals("insert all airports ")) {
 				String characteristics = command.substring(20);
 				String[] c = characteristics.split(" ");
-				String fileName = checkFile(c[0]);
-				String option = checkOption(c[1]);
 
-				red.massAddA(fileName, option);
+				if (c.length == 2) {
+					FileInputStream fileName = checkFile(c[0]);
+					String option = checkOption(c[1]);
+
+					String strLine;
+					if (fileName != null) {
+						BufferedReader br = new BufferedReader(new InputStreamReader(fileName));
+
+						while ((strLine = br.readLine()) != null) {
+							String[] str = strLine.split("#");
+							if (str.length == 3) {
+								String name = checkName(str[0]);
+								Double latitude = checkLatitude(str[1]);
+								Double length = checkLength(str[2]);
+								red.massAddA(option, name, latitude, length);
+							}
+						}
+					}
+				} else {
+					System.out.println(
+							"Invalid Command: You are inserting a different amount of parameters than the required");
+				}
+
 			} else if (command.length() > 16 && command.toLowerCase().substring(0, 15).equals("delete airport ")) {
-				String name = command.substring(15, 18);
 
+				String name = checkName(command.substring(15));
 				red.removeAirport(name);
+
 			} else if (command.length() == 18 && command.toLowerCase().substring(0, 18).equals("delete all airport")) {
 				red.clearAirports();
-			} else if (command.toLowerCase().substring(0, 14).equals("insert flight ")) {
+			} else if (command.length() > 15 && command.toLowerCase().substring(0, 14).equals("insert flight ")) {
 				String characteristics = command.substring(14);
 				String[] c = characteristics.split(" ");
-				String air = checkAir(c[0]);
-				Integer number = Integer.parseInt(c[1]);
-				List<String> days = checkDays(c[2]);
-				String from = checkName(c[3]);
-				String to = checkName(c[4]);
-				String departure = checkDeparture(c[5]);
-				String duration = checkDuration(c[6]);
-				Double price = checkPrice(c[7]);
-				
-				red.addFlight(air, number, days, from, to, departure, duration, price);
-			} else if (command.toLowerCase().substring(0, 18).equals("insert all flight ")) {
+
+				if (c.length == 8) {
+					String air = checkAir(c[0]);
+					Integer number = checkNumber(c[1]);
+					List<String> days = checkDays(c[2]);
+					String from = checkName(c[3]);
+					String to = checkName(c[4]);
+					String departure = checkDeparture(c[5]);
+					String duration = checkDuration(c[6]);
+					Double price = checkPrice(c[7]);
+
+					red.addFlight(air, number, days, from, to, departure, duration, price);
+				} else {
+					System.out.println(
+							"Invalid Command: You are inserting a different amount of parameters than the required");
+				}
+			} else if (command.length() > 19 && command.toLowerCase().substring(0, 18).equals("insert all flight ")) {
 				String characteristics = command.substring(18);
 				String[] c = characteristics.split(" ");
-				String fileName = checkFile(c[0]);
-				String option = checkOption(c[1]);
 
-				red.massAddF(fileName, option);
-			} else if (command.toLowerCase().substring(0, 14).equals("delete flight ")) {
+				if (c.length == 2) {
+					FileInputStream fileName = checkFile(c[0]);
+					String option = checkOption(c[1]);
+
+					String strLine;
+					if (fileName != null) {
+						BufferedReader br = new BufferedReader(new InputStreamReader(fileName));
+
+						while ((strLine = br.readLine()) != null) {
+							String[] str = strLine.split("#");
+							if (str.length == 8) {
+								String air = checkAir(str[0]);
+								Integer number = checkNumber(str[1]);
+								List<String> days = checkDays(str[2]);
+								String from = checkName(str[3]);
+								String to = checkName(str[4]);
+								String departure = checkDeparture(str[5]);
+								String duration = checkDuration(str[6]);
+								Double price = checkPrice(str[7]);
+
+								red.massAddF(option, air, number, days, from, to, departure, duration, price);
+							}
+						}
+					}
+				} else {
+					System.out.println(
+							"Invalid Command: You are inserting a different amount of parameters than the required");
+				}
+
+			} else if (command.length() > 15 && command.toLowerCase().substring(0, 14).equals("delete flight ")) {
 				String characteristics = command.substring(14);
 				String[] c = characteristics.split(" ");
-				String air = checkAir(c[0]);
-				Integer number = Integer.parseInt(c[1]);
 
-				red.removeFlight(air, number);
-			} else if (command.length() == 18 && command.toLowerCase().substring(0, 18).equals("delete all flight")) {
+				if (c.length == 2) {
+					String air = checkAir(c[0]);
+					Integer number = checkNumber(c[1]);
+
+					red.removeFlight(air, number);
+				} else {
+					System.out.println(
+							"Invalid Command: You are inserting a different amount of parameters than the required");
+				}
+			} else if (command.length() == 17 && command.toLowerCase().substring(0, 17).equals("delete all flight")) {
 				red.clearFlights();
 			} else if (command.length() > 11 && command.substring(0, 10).equals("findRoute ")) {
 				String characteristics = command.substring(10);
 				String[] c = characteristics.split(" ");
+				if (c.length == 4) {
+					String from = checkName(c[0]);
+					String to = checkName(c[1]);
+					String priority = checkPriority(c[2]);
+					List<String> days = checkDays(c[3]);
 
-				String from = checkName(c[0]);
-				String to = checkName(c[1]);
-				String priority = checkPriority(c[2]);
-				List<String> days = checkDays(c[3]);
-				
-				red.findRoute(from, to, priority, days);
+					red.findRoute(from, to, priority, days);
+				} else {
+					System.out.println(
+							"Invalid Command: You are inserting a different amount of parameters than the required");
+				}
+
 			} else if (command.length() > 14 && command.substring(0, 13).equals("outputFormat ")) {
 				String characteristics = command.substring(13);
 				String[] c = characteristics.split(" ");
-
-				String type = checkType(c[0]);
-				String output = checkOutput(c[1]);
-				
-				// LLAMAR A KML.. Tener una funcion wrapper y chequear que los parametros no sean null
-				//Si son null tirar invalid command, y sino llamar a la funcion q corrresponda(privada)
+				if (c.length == 2) {
+					String type = checkType(c[0]);
+					String output = checkOutput(c[1]);
+					// LLAMAR A KML.. Tener una funcion wrapper y chequear que los parametros no
+					// sean null
+					// Si son null tirar invalid command, y sino llamar a la funcion q
+					// corrresponda(privada)
+				} else {
+					System.out.println(
+							"Invalid Command: You are inserting a different amount of parameters than the required");
+				}
 			} else if (command.length() > 11 && command.substring(0, 10).equals("worldTrip ")) {
 				String characteristics = command.substring(10);
 				String[] c = characteristics.split(" ");
+				if (c.length == 3) {
+					String from = checkName(c[0]);
+					String priority = checkPriority(c[1]);
+					List<String> days = checkDays(c[2]);
 
-				String from = checkName(c[0]);
-				String priority = checkPriority(c[1]);
-				List<String> days = checkDays(c[2]);
-				
-				// red.worldTrip(from, priority, days) 
-				// Tener una funcion wrapper y chequear que los parametros no sean null
-				// Si son null tirar invalid command, y sino llamar a la funcion q corrresponda(privada)
+					// red.worldTrip(from, priority, days)
+					// Tener una funcion wrapper y chequear que los parametros no sean null
+					// Si son null tirar invalid command, y sino llamar a la funcion q
+					// corrresponda(privada)
+				} else {
+					System.out.println(
+							"Invalid Command: You are inserting a different amount of parameters than the required");
+				}
 			} else {
-				System.out.println("Invalid Command");
+				System.out.println("Invalid Command: It does not exist");
 			}
 
 		}
@@ -138,28 +218,60 @@ public class test {
 	}
 
 	public static String checkAir(String airline) {
-		if (airline.length() <= 3)
+		String PATTERN_AIR = "^[A-Z]{1,3}$";
+		Pattern pattern = Pattern.compile(PATTERN_AIR);
+
+		Matcher matcher = pattern.matcher(airline);
+
+		if (matcher.matches())
 			return airline;
 
 		return null;
 	}
 
 	public static List<String> checkDays(String days) {
-		String[] d = days.split("-");
+
+		String[] d;
+
+		if (days.contains("-"))
+			d = days.split("-");
+		else {
+			d = new String[1];
+			d[0] = days;
+		}
+
 		List<String> list = new LinkedList<String>();
 
 		for (String each : d) {
 			if (!each.equals("Lu") && !each.equals("Ma") && !each.equals("Mi") && !each.equals("Ju")
 					&& !each.equals("Vi") && !each.equals("Sa") && !each.equals("Do"))
 				return null;
-		else 
+			else
 				list.add(each);
 		}
+
 		return list;
 	}
 
+	public static Integer checkNumber(String number) {
+		String PATTERN_NUMBER = "^[1-9][0-9]{2,3}$";
+		Pattern pattern = Pattern.compile(PATTERN_NUMBER);
+
+		Matcher matcher = pattern.matcher(number);
+
+		if (matcher.matches())
+			return Integer.parseInt(number);
+
+		return null;
+	}
+
 	public static String checkName(String name) {
-		if (name.length() <= 3)
+		String PATTERN_NAME = "^[A-Z]{1,3}$";
+		Pattern pattern = Pattern.compile(PATTERN_NAME);
+
+		Matcher matcher = pattern.matcher(name);
+
+		if (matcher.matches())
 			return name;
 
 		return null;
@@ -186,7 +298,7 @@ public class test {
 	}
 
 	public static Double checkPrice(String price) {
-		String PATTERN_PRICE = "^[1-9][0-9]{3}[0-9]*(.[0-9]{1,2})?$";
+		String PATTERN_PRICE = "^[1-9][0-9]{2}[0-9]*(.[0-9]{1,2})?$";
 		Pattern pattern = Pattern.compile(PATTERN_PRICE);
 
 		Matcher matcher = pattern.matcher(price);
@@ -195,13 +307,22 @@ public class test {
 		return null;
 	}
 
-	public static String checkFile(String file) {
+	public static FileInputStream checkFile(String file) {
 		String PATTERN_FILE = "^[a-zA-Z0-9]+.txt$";
 		Pattern pattern = Pattern.compile(PATTERN_FILE);
 
 		Matcher matcher = pattern.matcher(file);
-		if (matcher.matches())
-			return file;
+		if (matcher.matches()) {
+			FileInputStream fstream;
+			try {
+				fstream = new FileInputStream(file);
+				return fstream;
+			} catch (FileNotFoundException e) {
+				System.out.println("Invalid Command: The file does not exist");
+			}
+
+		}
+
 		return null;
 
 	}

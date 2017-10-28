@@ -1,21 +1,15 @@
 package tpe;
 
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
+
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.Collections;
+
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
 
 public class AirportNetwork {
 
@@ -80,7 +74,7 @@ public class AirportNetwork {
 
 	public void addAirport(String name, Double latitude, Double length) {
 		if (name == null || latitude == null || length == null)
-			System.out.println("Invalid command");
+			System.out.println("Invalid command: At least one parameter is not respecting the format ");
 		else
 			add(name, latitude, length);
 	}
@@ -111,72 +105,27 @@ public class AirportNetwork {
 
 	}
 
-	public void massAddA(String fileName, String option) throws IOException {
-		if (fileName == null || option == null)
-			System.out.println("Invalid command");
-		else
-			massAddAirport(fileName, option);
+	public void massAddA(String option, String name, double latitude, double length) throws IOException {
+		if (option == null)
+			System.out.println("Invalid command: Option is not respecting the format");
+		else {
+			if (option.equals("replace"))
+				clearAirports();
 
-	}
-
-	/**
-	 * 
-	 * @param fileName
-	 *            Nombre del archivo .txt que debe estar en el mismo directorio
-	 *            donde corremos el programa
-	 * @param option
-	 *            Debe ser replace o append para saber si se quiere borrar todos los
-	 *            aeropuertos anteriores o no
-	 * @throws IOException
-	 * 
-	 *             Agrega todos los aeropuertos en un archivo .txt a nuestra red.
-	 */
-	private void massAddAirport(String fileName, String option) throws IOException {
-		FileInputStream fstream = new FileInputStream(fileName);
-		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-
-		String strLine;
-		Pattern pattern = Pattern.compile("(\\w+?)#(-?\\d+\\.\\d+)#(-?\\d+\\.\\d+)");
-		if (option.equals("replace")) {
-			this.clearAirports();
+			add(name, latitude, length);
 		}
-
-		// Leo por cada linea del archivo
-		while ((strLine = br.readLine()) != null) {
-			System.out.println(strLine);
-			String name;
-			double latitude;
-			double length;
-
-			Matcher matcher = pattern.matcher(strLine);
-			if (matcher.find() == true) {
-				name = matcher.group(1);
-				latitude = Double.parseDouble(matcher.group(2));
-				length = Double.parseDouble(matcher.group(3));
-				System.out.println("Adding airport with the following data");
-				System.out.println("Name: " + name + " Latitude: " + latitude + " Length: " + length);
-				System.out.println(
-						"------------------------------------------------------------------------------------------------------------------------------------------");
-
-				this.addAirport(name, latitude, length);
-			} else {
-				System.out.println("Error: check format of the input");
-			}
-
-		}
-
-		br.close();
 	}
 
 	public void removeAirport(String name) {
 		if (name != null)
 			remove(name);
+		else
+			System.out.println("Invalid command: Name is not respecting the format ");
 	}
 
 	private void remove(String name) {
 		Airport airport = this.map.remove(name);
 
-		
 		for (Airport a : airports) {
 			Iterator<Flight> iter = a.flights.iterator();
 			while (iter.hasNext()) {
@@ -186,11 +135,10 @@ public class AirportNetwork {
 				}
 			}
 		}
-		
+
 		if (airport != null)
 			airports.remove(airport);
-		
-		
+
 	}
 
 	public void printAirports() {
@@ -214,13 +162,15 @@ public class AirportNetwork {
 
 	public void addFlight(String air, Integer number, List<String> days, String from, String to, String departure,
 			String duration, Double p) {
+
 		if (air == null || number == null || days == null || from == null || to == null || departure == null
 				|| duration == null || p == null)
-			System.out.println("Invalid command");
+			System.out.println("Invalid command: At least one parameter is not respecting the format ");
 		else {
 			String[] dep = departure.split(":");
 			String dH;
 			String dM;
+			
 			if (duration.contains("h")) {
 				dH = duration.substring(0, duration.indexOf("h"));
 				dM = duration.substring(duration.indexOf("h") + 1, duration.indexOf("m"));
@@ -233,6 +183,7 @@ public class AirportNetwork {
 					Integer.parseInt(dH), p);
 		}
 	}
+	
 
 	private void add(String air, int number, List<String> days, String from, String to, int hod, int mod, int dM,
 			int dH, double p) {
@@ -250,96 +201,27 @@ public class AirportNetwork {
 		}
 
 	}
-	
+
 	private void existingFlight() {
-		//CHEQUEAR QUE NO EXISTA EL VUELO CON EL MISMO NRO Y AEROLINEA
+		// CHEQUEAR QUE NO EXISTA EL VUELO CON EL MISMO NRO Y AEROLINEA
 	}
 
-	public void massAddF(String fileName, String option) throws IOException {
-		if (fileName == null || option == null)
-			System.out.println("Invalid command");
-		else
-			massAddFlight(fileName, option);
+	public void massAddF(String option, String air, Integer number, List<String> days, String from, String to,
+			String departure, String duration, Double p) throws IOException {
+		if (option == null)
+			System.out.println("Invalid command: At least one parameter is not respecting the format ");
+		else {
+			if (option.equals("replace"))
+				clearAirports();
 
-	}
-
-	/**
-	 * 
-	 * @param fileName
-	 *            Nombre del archivo .txt que debe estar en el mismo directorio
-	 *            donde corremos el programa
-	 * @param option
-	 *            Debe ser replace o append para saber si se quiere borrar todos los
-	 *            aeropuertos anteriores o no
-	 * @throws IOException
-	 * 
-	 *             Agrega todos los vuelos en un archivo .txt a nuestra red.
-	 */
-	private void massAddFlight(String fileName, String option) throws IOException {
-
-		FileInputStream fstream = new FileInputStream(fileName);
-		BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-
-		String strLine;
-		// (\\w+?|-)+
-		Pattern pattern = Pattern.compile(
-				"(\\w+?)#(\\d+)#((\\w{2}?|-)+)#(\\w+?)#(\\w+?)#(\\d{2}):(\\d{2})#(\\d{2})h(\\d{2})m#(\\d+\\.?\\d+)");
-		//ALE CAMBIAR EL PATTERN PARA LA DURACION
-		if (option.equals("replace")) {
-			this.clearFlights();
+			addFlight(air, number, days, from, to, departure, duration, p);
 		}
 
-		// Leo por cada linea del archivo
-		while ((strLine = br.readLine()) != null) {
-			String airline;
-			int flightNumber;
-			String days;
-			List<String> weekDays = new ArrayList<String>();
-			String from;
-			String to;
-			int hod;
-			int mod;
-			int dH;
-			int dM;
-			double price;
-
-			Matcher matcher = pattern.matcher(strLine);
-			if (matcher.find() == true) {
-				airline = matcher.group(1);
-				flightNumber = Integer.parseInt(matcher.group(2));
-				days = matcher.group(3);
-				from = matcher.group(5);
-				to = matcher.group(6);
-				hod = Integer.parseInt(matcher.group(7));
-				mod = Integer.parseInt(matcher.group(8));
-				dH = Integer.parseInt(matcher.group(9));
-				dM = Integer.parseInt(matcher.group(10));
-				price = Double.parseDouble(matcher.group(11));
-
-				System.out.println("Adding flight with the following data");
-				System.out.println("Airline: " + airline + " Flight number: " + flightNumber + " Days: " + days
-						+ " From: " + from + " To: " + to + " Departure time: " + hod + ":" + mod + " Flight time: "
-						+ dH + "h" + dM + "m" + " Price: " + price);
-				System.out.println(
-						"------------------------------------------------------------------------------------------------------------------------------------------");
-
-				String[] arrayDays = days.split("-");
-				for (String s : arrayDays) {
-					weekDays.add(s);
-				}
-				this.add(airline, flightNumber, weekDays, from, to, hod, mod, dM, dH, price);
-			} else {
-				System.out.println("Error: Comprobar formato");
-			}
-
-		}
-
-		br.close();
 	}
 
 	public void removeFlight(String air, Integer number) {
 		if (air == null || number == null)
-			System.out.println("Invalid command");
+			System.out.println("Invalid command: At least one parameter is not respecting the format ");
 		else
 			remove(air, number);
 	}
@@ -349,7 +231,7 @@ public class AirportNetwork {
 			Iterator<Flight> iter = a.flights.iterator();
 			while (iter.hasNext()) {
 				Flight f = iter.next();
-				if (f.numberOfFlight == number) {
+				if (f.numberOfFlight == number && f.airline.equals(air)) {
 					iter.remove();
 					return;
 				}
@@ -361,7 +243,7 @@ public class AirportNetwork {
 	public void findRoute(String from, String to, String priority, List<String> days)
 			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
 		if (from == null || to == null || priority == null || days == null)
-			System.out.println("Invalid command");
+			System.out.println("Invalid command: At least one parameter is not respecting the format ");
 		else {
 			List<PQNode> ls = findRoute(this.map.get(from), this.map.get(to), priority, days);
 
@@ -392,6 +274,8 @@ public class AirportNetwork {
 	// Y a cada uno de los dias ponerlos en un ArrayList
 	private List<PQNode> findRoute(Airport from, Airport to, String priority, List<String> days)
 			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException {
+		// COMPLETAR
+
 		return null;
 	}
 
