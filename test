@@ -1,0 +1,111 @@
+package airport;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
+
+import airport.AirportNetwork.Flight;
+
+
+public class test {
+	
+
+	public static void main(String[] args) {
+		System.out.println("Prueba general:");
+		AirportNetwork grafo = new AirportNetwork();
+		int vertexCount = 10;
+		int edgeCount = 95;
+		Random asdd = new Random();
+		for(int i = 0; i < vertexCount; i++) {
+			Integer num = i;
+			String name = num.toString();
+			Double numD = 0.0 + i;
+			grafo.addAirport(name, numD, numD);
+		}	
+		
+		for(int i = 0; i < edgeCount; i++) {
+			List<String> days = new LinkedList<String>();
+			String[] week = {"Lu","Ma","Mi","Ju","Vi","Sa","Dom"};
+			Integer rand = asdd.nextInt(vertexCount);
+			Integer rand2 = asdd.nextInt(vertexCount);
+			String randS = rand.toString();
+			String randS2 = rand2.toString();
+			Integer hours = asdd.nextInt(13);
+			Integer minutes = asdd.nextInt(60);
+			String duration = hours.toString() + "h" + minutes.toString() + "m";
+			Integer departureHour = asdd.nextInt(24);
+			Integer departureMinute = asdd.nextInt(60);
+			String departure = departureHour.toString() + ":" + departureMinute.toString();
+			Integer p = asdd.nextInt(10000) + 5000;
+			Double price = 0.0 + p;
+			String name = "asd";
+			Integer firstDay = asdd.nextInt(7);
+			Integer secondDay = asdd.nextInt(7);
+			if(firstDay == secondDay && firstDay != 6)
+				secondDay++;
+			else if(firstDay == secondDay)
+				firstDay--;
+			days.add(week[firstDay]);
+			days.add(week[secondDay]);
+			grafo.addFlight(name, i, days, randS, randS2, departure, duration, price);
+			System.out.println("Connecting: " + randS + " -> " + randS2 + " Duration of flight: " + hours + "hours " + minutes + "minutes " + "Price: " + price + " Days: " + days.get(0) + "-" +days.get(1) + "Departure: " + departureHour + ":" + departureMinute);
+		}
+		
+
+		
+		
+		Map<Integer,List<Flight>> hamiltonCicles = grafo.worldTrip("1");
+		if(hamiltonCicles == null)
+			System.out.println("No era conexo o tenia vertices de corte");
+		else {
+			System.out.println();
+			System.out.println();
+			System.out.println("Cicles:");
+			//for(int i = 0; i < hamiltonCicles.size() ; i++) {
+				//int duration = 0;
+				//double price = 0.0;
+				//List<Flight> asd = hamiltonCicles.get(i);
+				//for(Flight edge: asd) {
+					//System.out.print(edge.getFrom() + " -> ");
+					//price += edge.getPrice();
+					//duration += edge.getTotalDuration();
+				//}
+				//System.out.print("0 	Duration: " + duration + " Price: " + price);
+				//System.out.println();
+			//}
+		}
+		System.out.println();	
+	List<Flight> bestPrice = grafo.worldTrip("1", "Price");
+	if(bestPrice != null) {
+		for(Flight edge: bestPrice) {
+				System.out.print(edge.getFrom() + " -> ");
+			}
+			System.out.print("0");
+			System.out.println();
+	}
+	
+	List<Flight> bestDuration = grafo.worldTrip("1", "Duration");
+	if(bestDuration != null) {
+		for(Flight edge: bestDuration) {
+				System.out.print(edge.getFrom() + " -> ");
+			}
+			System.out.print("0");
+			System.out.println();
+	}
+		String[] week = {"Lu","Ma","Mi","Ju","Vi","Sa","Dom"};
+    	System.out.println();
+	    System.out.println();
+		grafo.worldTripEfficient("1", "Price",week);
+		System.out.println();
+		System.out.println();
+		grafo.worldTripEfficient("1", "Duration",week);
+		System.out.println();
+		System.out.println();
+		
+
+		grafo.worldTripEfficient("1", "totalDuration",week);
+		System.out.println();
+		System.out.println();
+	}
+}
