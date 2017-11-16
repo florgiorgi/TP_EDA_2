@@ -1,5 +1,6 @@
 
 package airport;
+
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -126,13 +127,20 @@ public class AirportNetwork {
 		this.airports = new LinkedList<Airport>();
 	}
 
-	public void print() {
+	public void printNetwork() {
+
+		if (airports.isEmpty()) {
+			System.out.println("There is no airport loaded in our network");
+			return;
+		}
+
 		for (Airport a : airports) {
-			System.out.println("Aiport: " + a.name + "---------------------------------------------------------------");
-			for (Flight f : a.flights)
+			System.out.println("Aiport: " + a.name);
+			for (Flight f : a.flights) {
 				System.out.println("Flight: " + f.numberOfFlight + " - Airline: " + f.airline + " - From: "
 						+ f.from.name + " - To: " + f.to.name);
-
+			}
+			System.out.println();
 		}
 	}
 
@@ -154,19 +162,9 @@ public class AirportNetwork {
 			return true;
 		}
 
+		System.out.println("The airport you are trying to add already belongs to our network");
 		return false;
 
-	}
-
-	public void massAddA(String option, String name, double latitude, double length) throws IOException {
-		if (option == null)
-			System.out.println("Invalid command: Option is not respecting the format");
-		else {
-			if (option.equals("replace"))
-				clearAirports();
-
-			add(name, latitude, length);
-		}
 	}
 
 	public void removeAirport(String name) {
@@ -179,8 +177,10 @@ public class AirportNetwork {
 	private void remove(String name) {
 		Airport airport = this.map.get(name);
 
-		if (airport == null)
+		if (airport == null) {
+			System.out.println("The airport you are trying to delete does not exist");
 			return;
+		}
 
 		for (Airport a : airports) {
 			Iterator<Flight> iter = a.flights.iterator();
@@ -196,23 +196,19 @@ public class AirportNetwork {
 		map.remove(name);
 	}
 
-	public void printAirports() {
-		if (airports != null) {
-			for (Airport a : this.airports) {
-				System.out.println("Aiport " + a.name + ":");
-				for (Flight f : a.flights)
-					System.out
-							.println("Flight:" + f.numberOfFlight + " - From: " + f.from.name + " - To: " + f.to.name);
-			}
-		}
-	}
-
 	/**
 	 * Borra todos los aeropuertos de la red.
 	 */
 	public void clearAirports() {
+		if (airports.isEmpty()) {
+			System.out.println("There are no airports to delete, our network is empty");
+			return;
+		}
+
 		this.airports.clear();
 		this.map.clear();
+
+		System.out.println("All airports have been removed from our network");
 	}
 
 	public void addFlight(String air, Integer number, List<String> days, String from, String to, String departure,
@@ -245,8 +241,10 @@ public class AirportNetwork {
 		Airport f = this.map.get(from);
 		Airport t = this.map.get(to);
 
-		if (f == t && f != null)
+		if (f == t && f != null) {
+			System.out.println("The origin and destination of a flight can not be the same");
 			return;
+		}
 
 		if (f == null || t == null) {
 			System.out.println("The airport does not exist. Please insert the airport before inserting the flight.");
@@ -271,19 +269,6 @@ public class AirportNetwork {
 		f.flights.add(newFlight);
 	}
 
-	public void massAddF(String option, String air, Integer number, List<String> days, String from, String to,
-			String departure, String duration, Double p) throws IOException {
-		if (option == null)
-			System.out.println("Invalid command: At least one parameter is not respecting the format ");
-		else {
-			if (option.equals("replace"))
-				clearAirports();
-
-			addFlight(air, number, days, from, to, departure, duration, p);
-		}
-
-	}
-
 	public void removeFlight(String air, Integer number) {
 		if (air == null || number == null)
 			System.out.println("Invalid command: At least one parameter is not respecting the format ");
@@ -298,11 +283,13 @@ public class AirportNetwork {
 				Flight f = iter.next();
 				if (f.numberOfFlight == number && f.airline.equals(air)) {
 					iter.remove();
+					System.out.println("The flight " + f.numberOfFlight + " of " + f.airline + " has been removed from our network");
 					return;
 				}
 			}
 		}
-
+		
+		System.out.println("The flight " + number + " of " + air + " that you are trying to remove does not exist");
 	}
 
 	public void findRoute(String from, String to, String priority, List<String> days, String type, String output)
@@ -874,8 +861,8 @@ public class AirportNetwork {
 			newList.add(edge);
 		return newList;
 	}
-	
-	private List<String> copyListDays(List<String> list){
+
+	private List<String> copyListDays(List<String> list) {
 		List<String> newList = new LinkedList<String>();
 		for (String day : list)
 			newList.add(day);
@@ -899,7 +886,8 @@ public class AirportNetwork {
 	 *         que llega al otro aeropuerto
 	 */
 
-	public int calculateTotalTime(HamiltonCicle cycle, Flight connection, int arrivalHour, int arrivalMinute, String arrivalDay) {
+	public int calculateTotalTime(HamiltonCicle cycle, Flight connection, int arrivalHour, int arrivalMinute,
+			String arrivalDay) {
 		int arrivalDayInt = getDay(arrivalDay);
 		int differenceDay = 50;
 		int totalArrivalMinutes = arrivalHour * 60 + arrivalMinute;
@@ -911,7 +899,7 @@ public class AirportNetwork {
 				if (departureDay - arrivalDayInt < differenceDay) {
 					differenceDay = departureDay - arrivalDayInt;
 					cycle.departureDay = day;
-					
+
 				}
 			} else if (departureDay < arrivalDayInt) {
 				if (7 - arrivalDayInt + departureDay < differenceDay) {
@@ -980,9 +968,9 @@ public class AirportNetwork {
 		current.arrivalDay = getStringDay(finalDay);
 	}
 
-	
 	/**
-	 * Funcion wrapper que chequea si el formato de los parametros recibido es correcto
+	 * Funcion wrapper que chequea si el formato de los parametros recibido es
+	 * correcto
 	 * 
 	 * @param initial
 	 *            Nodo inicial del ciclo hamiltoniano
@@ -990,10 +978,11 @@ public class AirportNetwork {
 	 *            Prioridad a tomar en cuenta para obtener el mejor ciclo
 	 * @param days
 	 *            Dias posibles de inicio del world Trip
-	 * @throws IOException 
+	 * @throws IOException
 	 * 
 	 */
-	public void worldTrip(String from, String priority, List<String> days, String typeFormat, String outputFormat) throws IOException {
+	public void worldTrip(String from, String priority, List<String> days, String typeFormat, String outputFormat)
+			throws IOException {
 		if (from == null || priority == null || days == null) {
 			System.out.println("Invalid command: At least one parameter is not respecting the format");
 			return;
@@ -1010,10 +999,11 @@ public class AirportNetwork {
 	 *            Prioridad a tomar en cuenta para obtener el mejor ciclo
 	 * @param days
 	 *            Dias posibles de inicio del world Trip
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 
-	private void worldTripEfficient(String initial, String priority, List<String> days, String typeFormat, String outputFormat) throws IOException {
+	private void worldTripEfficient(String initial, String priority, List<String> days, String typeFormat,
+			String outputFormat) throws IOException {
 		clearMarks();
 		if (!this.isStronglyConnected(initial))
 			return;
@@ -1031,17 +1021,16 @@ public class AirportNetwork {
 		} else
 			result = worldTripEfficient(initial, priority, "Lu");
 
-		if(typeFormat.equals("text")) {
-			if(outputFormat.equals("stdout")) {
+		if (typeFormat.equals("text")) {
+			if (outputFormat.equals("stdout")) {
 				System.out.println(result);
-			}
-			else {
+			} else {
 				List<String> lines = Arrays.asList(result.toString());
 				Path file = Paths.get(outputFormat);
 				Files.write(file, lines, Charset.forName("UTF-8"));
 				System.out.println("File saved!");
 			}
-		} else if(typeFormat.equals("KML")) {
+		} else if (typeFormat.equals("KML")) {
 			Map<String, List<Double>> route = new LinkedHashMap<>();
 			for (Flight f : result.flights) {
 				List<Double> aux = new ArrayList<>();
@@ -1049,7 +1038,7 @@ public class AirportNetwork {
 				aux.add(f.from.length);
 				route.put(f.from.name + " ", aux);
 			}
-			Flight last = result.flights.get(result.flights.size()-1);
+			Flight last = result.flights.get(result.flights.size() - 1);
 			List<Double> aux = new ArrayList<>();
 			aux.add(last.to.latitude);
 			aux.add(last.to.length);
@@ -1058,9 +1047,8 @@ public class AirportNetwork {
 			// System.out.println(route);
 			KMLFormatter formatter = new KMLFormatter();
 			formatter.createKML(route, outputFormat);
-			}
 		}
-
+	}
 
 	/**
 	 * 
@@ -1110,8 +1098,8 @@ public class AirportNetwork {
 
 		current.visited = true;
 		if (nodesCount == this.airports.size() + 1) {
-			int totalTime = calculateTotalTime(currentList, connection, currentList.arrivalHours, currentList.arrivalMinutes,
-					currentList.arrivalDay);
+			int totalTime = calculateTotalTime(currentList, connection, currentList.arrivalHours,
+					currentList.arrivalMinutes, currentList.arrivalDay);
 			calculateArrivalTime(totalTime, currentList);
 			currentList.flights.add(connection);
 			currentList.daysDeparture.add(currentList.departureDay);
@@ -1135,8 +1123,8 @@ public class AirportNetwork {
 		}
 		int totalTime = 0;
 		if (connection != null) {
-			totalTime = calculateTotalTime(currentList, connection, currentList.arrivalHours, currentList.arrivalMinutes,
-					currentList.arrivalDay);
+			totalTime = calculateTotalTime(currentList, connection, currentList.arrivalHours,
+					currentList.arrivalMinutes, currentList.arrivalDay);
 			calculateArrivalTime(totalTime, currentList);
 			currentList.daysDeparture.add(currentList.departureDay);
 			currentList.flights.add(connection);
@@ -1157,7 +1145,7 @@ public class AirportNetwork {
 		}
 		if (nodesCount != this.airports.size() + 1
 				|| (nodesCount == this.airports.size() + 1 && !existConnection(current, initial))) {
-			
+
 			current.visited = false;
 			if (connection != null) {
 				currentList.flights.remove(connection);
@@ -1266,8 +1254,8 @@ public class AirportNetwork {
 			else
 				return true;
 		} else {
-			resultDuration = calculateTotalTime(currentList, result, currentList.arrivalHours, currentList.arrivalMinutes,
-					currentList.arrivalDay);
+			resultDuration = calculateTotalTime(currentList, result, currentList.arrivalHours,
+					currentList.arrivalMinutes, currentList.arrivalDay);
 			edgeDuration = calculateTotalTime(currentList, edge, currentList.arrivalHours, currentList.arrivalMinutes,
 					currentList.arrivalDay);
 			if (resultDuration < edgeDuration)
@@ -1318,7 +1306,7 @@ public class AirportNetwork {
 			this.arrivalHours = arrivalHours;
 			this.arrivalDay = arrivalDay;
 		}
-		
+
 		@Override
 		public String toString() {
 			StringBuffer ans = new StringBuffer();
@@ -1334,8 +1322,8 @@ public class AirportNetwork {
 			for (Flight f : flights) {
 
 				if (f != null)
-					ans.append(f.from.name + "#" + f.airline + "#" + f.numberOfFlight + "#"
-							+ daysDeparture.get(i) + "#" + f.to.name + '\n');
+					ans.append(f.from.name + "#" + f.airline + "#" + f.numberOfFlight + "#" + daysDeparture.get(i) + "#"
+							+ f.to.name + '\n');
 				i++;
 				ans.append('\n');
 			}

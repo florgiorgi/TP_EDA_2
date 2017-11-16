@@ -47,9 +47,11 @@ public class Test {
 				if (c.length == 2) {
 					FileInputStream fileName = checkFile(c[0]);
 					String option = checkOption(c[1]);
-
 					String strLine;
 					if (fileName != null) {
+						if (option.equals("replace"))
+							red.clearAirports();
+						
 						BufferedReader br = new BufferedReader(new InputStreamReader(fileName));
 
 						while ((strLine = br.readLine()) != null) {
@@ -58,7 +60,7 @@ public class Test {
 								String name = checkName(str[0]);
 								Double latitude = checkLatitude(str[1]);
 								Double length = checkLength(str[2]);
-								red.massAddA(option, name, latitude, length);
+								red.addAirport(name, latitude, length);
 							}
 						}
 					}
@@ -104,7 +106,9 @@ public class Test {
 					String strLine;
 					if (fileName != null) {
 						BufferedReader br = new BufferedReader(new InputStreamReader(fileName));
-
+						if (option.equals("replace"))
+							red.clearFlights();
+						
 						while ((strLine = br.readLine()) != null) {
 							String[] str = strLine.split("#");
 							if (str.length == 8) {
@@ -117,7 +121,7 @@ public class Test {
 								String duration = checkDuration(str[6]);
 								Double price = checkPrice(str[7]);
 								
-								red.massAddF(option, air, number, days, from, to, departure, duration, price);
+								red.addFlight(air, number, days, from, to, departure, duration, price);
 							}
 						}
 					}
@@ -190,10 +194,12 @@ public class Test {
 					System.out.println(
 							"Invalid Command: You are inserting a different amount of parameters than the required");
 				}
+			} else if(command.equals("network current status")){
+				red.printNetwork();
 			} else {
 				System.out.println("Invalid Command: It does not exist");
 			}
-			red.print();
+			
 		}
 
 		scan.close();
@@ -259,7 +265,7 @@ public class Test {
 	}
 
 	public static Integer checkNumber(String number) {
-		String PATTERN_NUMBER = "^[1-9][0-9]{2,3}$";
+		String PATTERN_NUMBER = "^([0-9]|[1-9][0-9]{1,5}$)";
 		Pattern pattern = Pattern.compile(PATTERN_NUMBER);
 
 		Matcher matcher = pattern.matcher(number);
@@ -293,7 +299,7 @@ public class Test {
 	}
 
 	public static String checkDuration(String duration) {
-		String PATTERN_DURATION = "^(1[0-9]h|[0-9]h)?[0-5][0-9]m";
+		String PATTERN_DURATION = "^(1[0-9]h|[0-9]h)?([0-5][0-9]|[0-9])m";
 		Pattern pattern = Pattern.compile(PATTERN_DURATION);
 
 		Matcher matcher = pattern.matcher(duration);
