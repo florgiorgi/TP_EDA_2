@@ -1093,11 +1093,12 @@ public class AirportNetwork {
 	 * correcto
 	 * 
 	 * @param initial
-	 *            Nodo inicial del ciclo hamiltoniano
+	 *            Nombre del aeropuerto donde comenzara la vuelta al mundo segun su
+	 *            codigo IATA o null si el formato ingresado era incorrecto
 	 * @param priority
-	 *            Prioridad a tomar en cuenta para obtener el mejor ciclo
+	 *            Prioridad pedida para buscar la vuelta al mundo o null si el formato ingresado era incorrecto
 	 * @param days
-	 *            Dias posibles de inicio del world Trip
+	 *            Lista de dias posibles de inicio de la vuelta al mundo o null si el formato ingresado era incorrecto
 	 * @throws IOException
 	 * 
 	 */
@@ -1120,11 +1121,12 @@ public class AirportNetwork {
 	/**
 	 * 
 	 * @param initial
-	 *            Nodo inicial del ciclo hamiltoniano
+	 *            Nombre del aeropuerto donde comenzara la vuelta al mundo segun su
+	 *            codigo IATA
 	 * @param priority
-	 *            Prioridad a tomar en cuenta para obtener el mejor ciclo
+	 *            Prioridad pedida para buscar la vuelta al mundo
 	 * @param days
-	 *            Dias posibles de inicio del world Trip
+	 *            Lista de dias posibles de inicio de la vuelta al mundo
 	 * @throws IOException
 	 */
 	private void worldTripEfficient(String initial, String priority, List<String> days, String typeFormat,
