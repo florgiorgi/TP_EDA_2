@@ -988,7 +988,7 @@ public class AirportNetwork {
 			System.out.println("Invalid command: At least one parameter is not respecting the format");
 			return;
 		} else {
-			worldTripEfficient(from, priority, days, typeFormat, outputFormat);
+
 		}
 	}
 

@@ -174,6 +174,7 @@ public class Test {
 					if (output != null && type != null) {
 						typeFormat = type;
 						outputFormat = output;
+						System.out.println("Format established: Type format is " + typeFormat + " and output format is " + outputFormat);
 					} else {
 						System.out.println("Invalid command: At least one parameter is not respecting the format");
 					}
@@ -188,8 +189,10 @@ public class Test {
 					String from = checkName(c[0]);
 					String priority = checkPriority(c[1]);
 					List<String> days = checkDays(c[2]);
-
-					red.worldTrip(from, priority, days, typeFormat, outputFormat);
+					if (typeFormat != null && outputFormat != null)
+						red.worldTrip(from, priority, days, typeFormat, outputFormat);
+					else
+						System.out.println("Invalid Command: You must call outputFormat first");
 				} else {
 					System.out.println(
 							"Invalid Command: You are inserting a different amount of parameters than the required");
