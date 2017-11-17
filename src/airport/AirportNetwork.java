@@ -191,7 +191,8 @@ public class AirportNetwork {
 				}
 			}
 		}
-
+		
+		System.out.println("The airport " + name + " has been removed from our network");
 		airports.remove(airport);
 		map.remove(name);
 	}

@@ -229,7 +229,7 @@ public class Test {
 	}
 
 	public static String checkAir(String airline) {
-		String PATTERN_AIR = "^[A-Z]{1,3}$";
+		String PATTERN_AIR = "^[A-Z0-9]{1,3}$";
 		Pattern pattern = Pattern.compile(PATTERN_AIR);
 
 		Matcher matcher = pattern.matcher(airline);
