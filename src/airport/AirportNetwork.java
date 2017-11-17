@@ -1006,11 +1006,15 @@ public class AirportNetwork {
 	private void worldTripEfficient(String initial, String priority, List<String> days, String typeFormat,
 			String outputFormat) throws IOException {
 		clearMarks();
-		if (!this.isStronglyConnected(initial))
+		if (!this.isStronglyConnected(initial)){
+			System.out.println("There is not a hamiltonian cycle");
 			return;
+		}
 		clearMarks();
-		if (this.areCutVertex())
+		if (this.areCutVertex()){
+			System.out.println("There is not a hamiltonian cycle");
 			return;
+		}	
 		HamiltonCicle result = new HamiltonCicle(0, 0, "Lu");
 		if (priority == "totalDuration") {
 			for (int i = 0; i < days.size(); i++) {
@@ -1018,9 +1022,13 @@ public class AirportNetwork {
 				substractExtraTime(current);
 				if (!isPassed(result, current, priority))
 					result = current;
+				if(result.flightDuration == 0)
+					System.out.println("There is not a hamiltonian cycle");
 			}
 		} else
 			result = worldTripEfficient(initial, priority, "Lu");
+			if(result.flightDuration == 0)
+				System.out.println("There is not a hamiltonian cycle");
 
 		if (typeFormat.equals("text")) {
 			if (outputFormat.equals("stdout")) {
