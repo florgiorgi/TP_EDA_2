@@ -1170,9 +1170,11 @@ public class AirportNetwork {
 			if ((((edge.to.visited != true || (edge.to == initial && nodesCount == this.airports.size()))
 					&& !visited.contains(edge.to)))) {
 				edge = existBetterFlight(current, edge.to, priority, currentList,days,initial);
-				efficient = getHamiltonCiclesEfficient(initial, edge.to, nodesCount + 1, efficient, currentList, edge,
-						priority,days);
-				visited.add(edge.to);
+				if(edge != null) {
+					efficient = getHamiltonCiclesEfficient(initial, edge.to, nodesCount + 1, efficient, currentList, edge,
+							priority,days);
+					visited.add(edge.to);
+				}
 			}
 		}
 		if (nodesCount != this.airports.size() + 1
