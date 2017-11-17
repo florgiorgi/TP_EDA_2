@@ -1026,7 +1026,7 @@ public class AirportNetwork {
 					System.out.println("There is not a hamiltonian cycle");
 			}
 		} else
-			result = worldTripEfficient(initial, priority, "Lu");
+			result = worldTripEfficient(initial, priority, days.get(0));
 			if(result.flightDuration == 0)
 				System.out.println("There is not a hamiltonian cycle");
 
