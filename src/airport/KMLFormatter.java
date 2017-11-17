@@ -62,7 +62,7 @@ public class KMLFormatter {
 
 			// name element
 			Element name = doc.createElement("name");
-			name.appendChild(doc.createTextNode(nameOfFile + ".kml")); // el nombre del archivo
+			name.appendChild(doc.createTextNode(nameOfFile + ".kml")); 
 			document.appendChild(name);
 
 			// StyleMap element
@@ -234,8 +234,6 @@ public class KMLFormatter {
 
 				// range element
 				Element range = doc.createElement("range");
-				// el range es la distancia entre el mapa y el ojo, deberíamos calcularlo
-				// dependiendo de la distancia entre los lugares que se guardan
 				range.appendChild(doc.createTextNode("1020.448950673321"));
 				lookAt.appendChild(range);
 
@@ -246,8 +244,8 @@ public class KMLFormatter {
 
 				// styleUrl element
 				Element styleUrl3 = doc.createElement("styleUrl");
-				styleUrl3.appendChild(doc.createTextNode("#m_ylw-pushpin")); // podria ponerlo aca
-																				// http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png
+				styleUrl3.appendChild(doc.createTextNode("#m_ylw-pushpin"));
+				// http://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png
 				placemark.appendChild(styleUrl3);
 
 				// Point element
@@ -314,7 +312,8 @@ public class KMLFormatter {
 				transformer.transform(source, result);
 
 			} else {
-				StreamResult result = new StreamResult(new File("./" + nameOfFile + ".kml")); // WINDOWS ".\\" + nameOfFile + ".kml"
+				StreamResult result = new StreamResult(new File("./" + nameOfFile + ".kml")); // WINDOWS ".\\" +
+																								// nameOfFile + ".kml"
 				transformer.transform(source, result);
 				System.out.println("File saved!");
 			}

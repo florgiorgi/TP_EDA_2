@@ -15,13 +15,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-public class AirportNetwork<V>{
-
+public class AirportNetwork {
 	private List<Airport> airports;
 	private Map<String, Airport> map;
 
 	public static class Airport {
-
 		private String name;
 		private double latitude;
 		private double length;
@@ -51,7 +49,6 @@ public class AirportNetwork<V>{
 	}
 
 	static class Flight {
-
 		private String airline;
 		private int numberOfFlight;
 		private List<String> daysDeparture;
@@ -65,7 +62,6 @@ public class AirportNetwork<V>{
 
 		public Flight(String air, int nof, List<String> dd, Airport f, Airport t, int hod, int mod, int dm, int dh,
 				double p) {
-
 			this.airline = air;
 			this.numberOfFlight = nof;
 			this.daysDeparture = dd;
@@ -76,7 +72,6 @@ public class AirportNetwork<V>{
 			this.durationMinutes = dm;
 			this.durationHours = dh;
 			this.price = p;
-
 		}
 
 		public Flight() {
@@ -125,7 +120,6 @@ public class AirportNetwork<V>{
 	}
 
 	public void printNetwork() {
-
 		if (airports.isEmpty()) {
 			System.out.println("There is no airport loaded in our network");
 			return;
@@ -140,9 +134,21 @@ public class AirportNetwork<V>{
 			System.out.println();
 		}
 
-		System.out.println(airports.size());
 	}
 
+	/**
+	 * Agrega un aeropuerto a la red, si este no existe en la misma
+	 * 
+	 * @param name
+	 *            Nombre del aeropuerto segun su codigo IATA o null si el formato
+	 *            ingresado era incorrecto
+	 * @param latitude
+	 *            Latitud geografica del aeropuerto o null si el formato ingresado
+	 *            era incorrecto
+	 * @param length
+	 *            Longitud geografica del aeropuerto o null si el formato ingresado
+	 *            era incorrecto
+	 */
 	public void addAirport(String name, Double latitude, Double length) {
 		if (name == null || latitude == null || length == null)
 			System.out.println("Invalid command: At least one parameter is not respecting the format ");
@@ -151,21 +157,32 @@ public class AirportNetwork<V>{
 
 	}
 
-	private boolean add(String name, double latitude, double length) {
-
+	/**
+	 * 
+	 * @param name
+	 *            Nombre del aeropuerto segun su codigo IATA
+	 * @param latitude
+	 *            Latitud geografica del aeropuerto
+	 * @param length
+	 *            Longitud geografica del aeropuerto
+	 */
+	private void add(String name, double latitude, double length) {
 		if (!map.containsKey(name)) {
 			Airport a = new Airport(name, latitude, length);
 			this.airports.add(a);
 			this.map.put(name, a);
 			System.out.println("The airport " + a.name + " has been added to our network");
-			return true;
-		}
-
-		System.out.println("The airport you are trying to add already belongs to our network");
-		return false;
-
+		} else
+			System.out.println("The airport you are trying to add already belongs to our network");
 	}
 
+	/**
+	 * Remueve el aeropuerto correspodiente al nombre si este existe
+	 * 
+	 * @param name
+	 *            Nombre del aeropuerto a eliminar segun su codigo IATA o null si el
+	 *            formato ingresado era incorrecto
+	 */
 	public void removeAirport(String name) {
 		if (name != null)
 			remove(name);
@@ -173,6 +190,11 @@ public class AirportNetwork<V>{
 			System.out.println("Invalid command: Name is not respecting the format ");
 	}
 
+	/**
+	 * 
+	 * @param name
+	 *            Nombre del aeropuerto a eliminar segun su codigo IATA
+	 */
 	private void remove(String name) {
 		Airport airport = this.map.get(name);
 
@@ -211,9 +233,34 @@ public class AirportNetwork<V>{
 		System.out.println("All airports have been removed from our network");
 	}
 
+	/**
+	 * Agrega un vuelo a la red, si este no existe en la misma
+	 * 
+	 * @param air
+	 *            Nombre de la aerolinea del vuelo segun su codigo IATA o null si el
+	 *            formato ingresado era incorrecto
+	 * @param number
+	 *            Numero de vuelo o null si el formato ingresado era incorrecto
+	 * @param days
+	 *            Lista de dias de salida del vuelo o null si el formato ingresado
+	 *            era incorrecto
+	 * @param from
+	 *            Aeropuerto de salida del vuelo o null si el formato ingresado era
+	 *            incorrecto
+	 * @param to
+	 *            Aeropuerto de llegada del vuelo o null si el formato ingresado era
+	 *            incorrecto
+	 * @param departure
+	 *            Horario de salida del vuelo o null si el formato ingresado era
+	 *            incorrecto
+	 * @param duration
+	 *            Duracion del vuelo o null si el formato ingresado era incorrecto
+	 * @param p
+	 *            Precio del vuelo en dolares o null si el formato ingresado era
+	 *            incorrecto
+	 */
 	public void addFlight(String air, Integer number, List<String> days, String from, String to, String departure,
 			String duration, Double p) {
-
 		if (air == null || number == null || days == null || from == null || to == null || departure == null
 				|| duration == null || p == null)
 			System.out.println("Invalid command: At least one parameter is not respecting the format ");
@@ -233,11 +280,34 @@ public class AirportNetwork<V>{
 			add(air, number, days, from, to, Integer.parseInt(dep[0]), Integer.parseInt(dep[1]), Integer.parseInt(dM),
 					Integer.parseInt(dH), p);
 		}
+
 	}
 
+	/**
+	 * 
+	 * @param air
+	 *            Nombre de la aerolinea del vuelo segun su codigo IATA
+	 * @param number
+	 *            Numero de vuelo
+	 * @param days
+	 *            Lista de dias de salida del vuelo
+	 * @param from
+	 *            Aeropuerto de salida del vuelo
+	 * @param to
+	 *            Aeropuerto de llegada del vuelo
+	 * @param hod
+	 *            Hora de salida del vuelo
+	 * @param mod
+	 *            Minuto de salida del vuelo
+	 * @param dM
+	 *            Minutos que dura el vuelo
+	 * @param dH
+	 *            Horas que dura el vuelo
+	 * @param p
+	 *            Precio del vuelo
+	 */
 	private void add(String air, int number, List<String> days, String from, String to, int hod, int mod, int dM,
 			int dH, double p) {
-
 		Airport f = this.map.get(from);
 		Airport t = this.map.get(to);
 
@@ -266,6 +336,16 @@ public class AirportNetwork<V>{
 		f.flights.add(newFlight);
 	}
 
+	/**
+	 * Remueve el vuelo correspodiente al nombre si este existe
+	 * 
+	 * @param air
+	 *            Nombre de la aerolinea del vuelo a eliminar segun su codigo IATA o
+	 *            null si el formato ingresado era incorrecto
+	 * @param number
+	 *            Numero del vuelo a eliminar o null si el formato ingresado era
+	 *            incorrecto
+	 */
 	public void removeFlight(String air, Integer number) {
 		if (air == null || number == null)
 			System.out.println("Invalid command: At least one parameter is not respecting the format ");
@@ -273,6 +353,13 @@ public class AirportNetwork<V>{
 			remove(air, number);
 	}
 
+	/**
+	 * 
+	 * @param air
+	 *            Nombre de la aerolinea del vuelo a eliminar segun su codigo IATA
+	 * @param number
+	 *            Numero del vuelo a eliminar
+	 */
 	private void remove(String air, int number) {
 		for (Airport a : airports) {
 			Iterator<Flight> iter = a.flights.iterator();
@@ -290,6 +377,33 @@ public class AirportNetwork<V>{
 		System.out.println("The flight " + number + " of " + air + " that you are trying to remove does not exist");
 	}
 
+	/**
+	 * Encuentra la ruta entre el aeropuerto de origen y el de destino especificados
+	 * 
+	 * @param from
+	 *            Aeropuerto de salida de la ruta a encontrar o null si el formato
+	 *            ingresado era incorrecto
+	 * @param to
+	 *            Aeropuerto de llegada de la ruta a encontrar o null si el formato
+	 *            ingresado era incorrecto
+	 * @param priority
+	 *            Prioridad pedida para buscar la ruta o null si el formato
+	 *            ingresado era incorrecto Visto de otra forma es el peso que vamos
+	 *            a usar en las aristas al aplicar Djikstra.
+	 * @param days
+	 *            Lista de dias en los que se busca comenzar el viaje o null si el
+	 *            formato ingresado era incorrecto
+	 * @param type
+	 *            ​Indica si el formato es tipo texto o tipo KML.
+	 * @param output
+	 *            ​Indica el destino de la salida
+	 * 
+	 * @throws NoSuchFieldException
+	 * @throws SecurityException
+	 * @throws IllegalArgumentException
+	 * @throws IllegalAccessException
+	 * @throws IOException
+	 */
 	public void findRoute(String from, String to, String priority, List<String> days, String type, String output)
 			throws NoSuchFieldException, SecurityException, IllegalArgumentException, IllegalAccessException,
 			IOException {
@@ -297,18 +411,18 @@ public class AirportNetwork<V>{
 			System.out.println("Invalid command: At least one parameter is not respecting the format");
 			return;
 		}
-		List<PQNode<V>> nodes = findRoute(this.map.get(from), this.map.get(to), priority, days, type, output);
+		List<PQNode> nodes = findRoute(this.map.get(from), this.map.get(to), priority, days, type, output);
 		if (nodes == null) {
 			System.out.println("Not found");
 		} else if (type.equals("KML")) {
 			Map<String, List<Double>> route = new LinkedHashMap<>();
-			for (PQNode<V> node : nodes) {
+			for (PQNode node : nodes) {
 				List<Double> aux = new ArrayList<>();
 				aux.add(node.airport.latitude);
 				aux.add(node.airport.length);
 				route.put(node.airport.name, aux);
 			}
-			// System.out.println(route);
+
 			KMLFormatter formatter = new KMLFormatter();
 			formatter.createKML(route, output);
 		}
@@ -317,42 +431,35 @@ public class AirportNetwork<V>{
 	/**
 	 * 
 	 * @param from
-	 *            Aeropuerto de origen
+	 *            Aeropuerto de salida de la ruta a encontrar
 	 * @param to
-	 *            Aeropuerto de destino
+	 *            Aeropuerto de llegada de la ruta a encontrar
 	 * @param priority
-	 *            es la prioridad para ordenar los viajes. Visto de otra forma el
-	 *            peso que vamos a usar en las aristas al aplicar Djikstra.
+	 *            Prioridad pedida para buscar la ruta
 	 * @param days
-	 *            String con los dias. Hay que sacarles el guion.
+	 *            Lista de dias en los que se busca comenzar el viaje
 	 * 
-	 *            Encuentra la mejor ruta teniendo en cuanta la prioridad. Se aplica
-	 *            el algoritmo de Djikstra.
 	 * @throws SecurityException
 	 * @throws NoSuchFieldException
 	 * @throws IllegalAccessException
 	 * @throws IllegalArgumentException
 	 * @throws IOException
 	 */
-	// A este metodo hay que llamarlo con los datos ya en sus respectivas clases
-	// (Me refiero a pasar el string de aeropuertos a la clase Airport)
-	// Y a cada uno de los dias ponerlos en un ArrayList
-	private List<PQNode<V>> findRoute(Airport from, Airport to, String priority, List<String> days, String type,
+	private List<PQNode> findRoute(Airport from, Airport to, String priority, List<String> days, String type,
 			String output) throws NoSuchFieldException, SecurityException, IllegalArgumentException,
 			IllegalAccessException, IOException {
-
 		if (from == null || to == null) {
 			return null; // error
 		}
 		clearMarks();
 
-		PriorityQueue<PQNode<V>> pq = new PriorityQueue<>();
-		List<PQNode<V>> ls = new ArrayList<>();
+		PriorityQueue<PQNode> pq = new PriorityQueue<>();
+		List<PQNode> ls = new ArrayList<>();
 
-		pq.offer(new PQNode<V>(from, 0, 0, 0, 0, null, "", new ArrayList<>()));
+		pq.offer(new PQNode(from, 0, 0, 0, 0, null, "", new ArrayList<>()));
 
 		while (!pq.isEmpty()) {
-			PQNode<V> aux = pq.poll();
+			PQNode aux = pq.poll();
 			if (aux.airport.equals(to)) {
 				aux.ls.add(aux);
 				if (type.equals("text")) {
@@ -368,52 +475,48 @@ public class AirportNetwork<V>{
 				return aux.ls;
 			}
 
-			if (!aux.airport.visited || (aux.airport.name.equals(from) && priority.equals("tt"))) {
-
+			if (!aux.airport.visited || (aux.airport.name.equals(from.name) && priority.equals("tt"))) {
 				aux.airport.visited = true;
 				for (Flight f : aux.airport.flights) {
-
 					for (String day : f.daysDeparture) {
-
 						if (!aux.airport.name.equals(from.name) || days.isEmpty() || days.contains(day)) {
-
 							ls.addAll(aux.ls);
 							ls.add(aux);
 
 							if (priority.equals("ft")) {
 								if (aux.flight != null)
-									pq.offer(new PQNode<V>(f.to, aux.weight + f.durationHours * 60 + f.durationMinutes,
+									pq.offer(new PQNode(f.to, aux.weight + f.durationHours * 60 + f.durationMinutes,
 											aux.price + f.price,
 											aux.flightTime + f.durationHours * 60 + f.durationMinutes,
 											aux.totalTime + getTimeDiference(aux.flight, aux.currentDay, f, day), f,
 											day, ls));
 								else {
-									pq.offer(new PQNode<V>(f.to, aux.weight + f.durationHours * 60 + f.durationMinutes,
+									pq.offer(new PQNode(f.to, aux.weight + f.durationHours * 60 + f.durationMinutes,
 											aux.price + f.price,
 											aux.flightTime + f.durationHours * 60 + f.durationMinutes,
 											aux.totalTime + f.durationHours * 60 + f.durationMinutes, f, day, ls));
 								}
 							} else if (priority.equals("pr")) {
 								if (aux.flight != null)
-									pq.offer(new PQNode<V>(f.to, aux.weight + f.price, aux.price + f.price,
+									pq.offer(new PQNode(f.to, aux.weight + f.price, aux.price + f.price,
 											aux.flightTime + f.durationHours * 60 + f.durationMinutes,
 											aux.totalTime + getTimeDiference(aux.flight, aux.currentDay, f, day), f,
 											day, ls));
 								else
-									pq.offer(new PQNode<V>(f.to, aux.weight + f.price, aux.price + f.price,
+									pq.offer(new PQNode(f.to, aux.weight + f.price, aux.price + f.price,
 											aux.flightTime + f.durationHours * 60 + f.durationMinutes,
 											aux.totalTime + f.durationHours * 60 + f.durationMinutes, f, day, ls));
 
 							} else {
 								if (aux.flight != null)
-									pq.offer(new PQNode<V>(f.to,
+									pq.offer(new PQNode(f.to,
 											aux.weight + getTimeDiference(aux.flight, aux.currentDay, f, day),
 											aux.price + f.price,
 											aux.flightTime + f.durationHours * 60 + f.durationMinutes,
 											aux.totalTime + getTimeDiference(aux.flight, aux.currentDay, f, day), f,
 											day, ls));
 								else
-									pq.offer(new PQNode<V>(f.to,
+									pq.offer(new PQNode(f.to,
 											aux.weight + aux.totalTime + f.durationHours * 60 + f.durationMinutes,
 											aux.price + f.price,
 											aux.flightTime + f.durationHours * 60 + f.durationMinutes,
@@ -431,17 +534,27 @@ public class AirportNetwork<V>{
 	}
 
 	/**
-	 * 
 	 * Borra todos los vuelos de la red
-	 * 
 	 */
 	public void clearFlights() {
 		for (Airport a : airports)
 			a.flights.clear();
 	}
 
+	/**
+	 * Retorna la diferencia de tiempo entre un vuelo y otro
+	 * 
+	 * @param f1
+	 *            Vuelo de llegada
+	 * @param day1
+	 *            Dia que llega el vuelo f1
+	 * @param f2
+	 *            Vuelo de salida
+	 * @param day2
+	 *            Dia que sale el vuelo f2
+	 * @return
+	 */
 	private double getTimeDiference(Flight f1, String day1, Flight f2, String day2) {
-
 		double totalMins = 0;
 		boolean changeHour, changeDay;
 
@@ -557,7 +670,6 @@ public class AirportNetwork<V>{
 		}
 
 		totalMins += f2.durationHours * 60 + f2.durationMinutes;
-
 		return totalMins;
 	}
 
@@ -604,27 +716,27 @@ public class AirportNetwork<V>{
 	}
 
 	public void clearMarks() {
-		for (Airport a : airports) 
+		for (Airport a : airports)
 			a.visited = false;
 	}
 
 	@SuppressWarnings("hiding")
-	private class PQNode<V> implements Comparable<PQNode<V>> {
+	private class PQNode implements Comparable<PQNode> {
 		Airport airport;
-		double weight; // Es el criterio q vamos a usar
-		double price; // OJO va a ser el precio total
-		double flightTime; // Tiempo TOTAL de vuelo
-		double totalTime; // Tiempo total de viaje
+		double weight;
+		double price;
+		double flightTime;
+		double totalTime;
 		String currentDay;
-		Flight flight; // Son los vuelos que tiene acumulado ese nodo
-		List<PQNode<V>> ls;
+		Flight flight;
+		List<PQNode> ls;
 
-		public int compareTo(PQNode<V> other) {
+		public int compareTo(PQNode other) {
 			return Double.valueOf(weight).compareTo(other.weight);
 		}
 
 		public PQNode(Airport a, double weight, double price, double flightTime, double totalTime, Flight f,
-				String currentDay, List<PQNode<V>> ls) {
+				String currentDay, List<PQNode> ls) {
 			this.airport = a;
 			this.weight = weight;
 			this.price = price;
@@ -646,7 +758,7 @@ public class AirportNetwork<V>{
 			ans.append('\n');
 			ans.append('\n');
 
-			for (PQNode<V> pq : ls) {
+			for (PQNode pq : ls) {
 				if (pq.flight != null)
 					ans.append(pq.flight.from.name + "#" + pq.flight.airline + "#" + pq.flight.numberOfFlight + "#"
 							+ pq.currentDay + "#" + pq.flight.to.name + '\n');
@@ -657,11 +769,10 @@ public class AirportNetwork<V>{
 	}
 
 	/**
-	 * La funcion revisa que el grafo dirigido sera fuertemente conexo
+	 * La funcion revisa que el grafo dirigido sea fuertemente conexo
 	 * 
 	 * @return true si el grafo dirigido es fuertemente conexo, false en otro caso
 	 */
-
 	public boolean isStronglyConnected(String initial) {
 		clearMarks();
 		if (oneToAll(this.map.get(initial), 1) != this.airports.size())
@@ -685,7 +796,6 @@ public class AirportNetwork<V>{
 	 *            Lleva la cuenta de la cantidad de vertices visitados
 	 * @return Retorna la cantidad de vertices visitados
 	 */
-
 	private int oneToAll(Airport current, int vertexAmount) {
 		if (current.flights.size() == 0)
 			return 0;
@@ -735,7 +845,7 @@ public class AirportNetwork<V>{
 	public boolean areCutVertex() {
 		int index;
 		clearMarks();
-		AirportNetwork<V> notDirected = new AirportNetwork<V>();
+		AirportNetwork notDirected = new AirportNetwork();
 		for (int i = 0; i < this.airports.size(); i++) {
 			Airport current = this.airports.get(i);
 			notDirected.addAirportNotDirected(current.name, current.latitude, current.length);
@@ -753,7 +863,6 @@ public class AirportNetwork<V>{
 	}
 
 	private void addAirportNotDirected(String name, double latitude, double length) {
-
 		Airport a = new Airport(name, latitude, length);
 		this.airports.add(a);
 		this.map.put(name, a);
@@ -761,13 +870,12 @@ public class AirportNetwork<V>{
 	}
 
 	/**
-	 * Revisa que los nodos del grafo no dirigido, no sean vertices de corte
+	 * Revisa que los nodos del grafo no dirigido no sean vertices de corte
 	 * 
 	 * @param index
 	 *            Indice del vertice a verificar
 	 * @return true, si el vertice a verificar es de corte, false en otro caso
 	 */
-
 	private boolean areCutVertex(int index, int visited) {
 		clearMarks();
 		this.airports.get(visited).visited = true;
@@ -783,7 +891,6 @@ public class AirportNetwork<V>{
 	 * @param current
 	 *            Es el nodo actual de la recusion
 	 */
-
 	private void createNotDirected(Airport current) {
 		current.visited = true;
 		for (Flight edge : current.flights) {
@@ -812,8 +919,8 @@ public class AirportNetwork<V>{
 			dM = duration.substring(0, duration.indexOf("m"));
 		}
 
-		addNotDirected(air, number, days, from, to, Integer.parseInt(dep[0]), Integer.parseInt(dep[1]), Integer.parseInt(dM),
-				Integer.parseInt(dH), p);
+		addNotDirected(air, number, days, from, to, Integer.parseInt(dep[0]), Integer.parseInt(dep[1]),
+				Integer.parseInt(dM), Integer.parseInt(dH), p);
 
 	}
 
@@ -834,7 +941,7 @@ public class AirportNetwork<V>{
 	 *            Nodo actual de la recursion
 	 * @param airports
 	 *            Cantidad de aeropuertos visitados
-	 * @return true, si es vertice de corte, false, sino
+	 * @return true si es vertice de corte o false en caso contrario
 	 */
 	private int isCutVertex(Airport current, int airports) {
 		current.visited = true;
@@ -853,9 +960,8 @@ public class AirportNetwork<V>{
 	 *            Aeropuerto inicio
 	 * @param second
 	 *            Aeropuerto destino
-	 * @return true, si existe dicho vuelo, false sino
+	 * @return true si existe dicho vuelo o false en caso contrario
 	 */
-
 	private boolean existConnection(Airport first, Airport second) {
 		for (Flight edge : first.flights) {
 			if (edge.to == second)
@@ -898,10 +1004,9 @@ public class AirportNetwork<V>{
 	 *            Minuto de llegada al primer aeropuerto
 	 * @param arrivalDay
 	 *            Dia de llegada al primer aeropuerto
-	 * @return el tiempo total desde que el pasajero arrivo a un aeropuerto, hasta
-	 *         que llega al otro aeropuerto
+	 * @return el tiempo total desde que el pasajero sale del aeropuerto origen
+	 *         hasta que llega al destino
 	 */
-
 	public int calculateTotalTime(HamiltonCicle cycle, Flight connection, int arrivalHour, int arrivalMinute,
 			String arrivalDay) {
 		int arrivalDayInt = getDay(arrivalDay);
@@ -947,7 +1052,6 @@ public class AirportNetwork<V>{
 	 * @param current
 	 *            Objeto que tiene la informacion necesaria
 	 */
-
 	private void calculateArrivalTime(int totalMinutes, HamiltonCicle current) {
 		int days = totalMinutes / 60 / 24;
 		totalMinutes -= days * 24 * 60;
@@ -1023,7 +1127,6 @@ public class AirportNetwork<V>{
 	 *            Dias posibles de inicio del world Trip
 	 * @throws IOException
 	 */
-
 	private void worldTripEfficient(String initial, String priority, List<String> days, String typeFormat,
 			String outputFormat) throws IOException {
 		clearMarks();
@@ -1268,8 +1371,8 @@ public class AirportNetwork<V>{
 	}
 
 	/**
-	 ** Revisa que el vuelo pueda comenzar en ese dia
-	 **/
+	 * Revisa que el vuelo pueda comenzar en ese dia
+	 */
 	private boolean flightContainsDays(Flight flight, List<String> days) {
 		for (String daysFlight : flight.daysDeparture)
 			if (days.contains(daysFlight))
@@ -1280,7 +1383,7 @@ public class AirportNetwork<V>{
 	/**
 	 * 
 	 * @param result
-	 *            Mejor vuelo del momento encontrado
+	 *            Mejor vuelo encontrado hasta el momento
 	 * @param edge
 	 *            Vuelo que se esta revisando
 	 * @param priority
@@ -1317,12 +1420,11 @@ public class AirportNetwork<V>{
 			else
 				return true;
 		}
-
 	}
 
 	/**
 	 * Elimina el tiempo extra, puesto que al iniciar el ciclo inicia con el horario
-	 * 00:00, esta funcion, hace que la diferencia entre 00:00 y el prime vuelo se
+	 * 00:00. Esta funcion hace que la diferencia entre 00:00 y el primer vuelo se
 	 * elimine
 	 * 
 	 * @param cycle
@@ -1339,7 +1441,6 @@ public class AirportNetwork<V>{
 	}
 
 	private class HamiltonCicle {
-
 		private List<Flight> flights;
 		private List<String> daysDeparture;
 		private double price;
@@ -1383,7 +1484,6 @@ public class AirportNetwork<V>{
 
 			return ans.toString();
 		}
-
 	}
 
 	public void printConnections() {

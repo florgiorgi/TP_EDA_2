@@ -23,7 +23,7 @@ public class Test {
 
 		while (scan.hasNext()) {
 			String command = scan.nextLine();
-			
+
 			if (command.toLowerCase().equals("exit"))
 				break;
 
@@ -51,7 +51,7 @@ public class Test {
 					if (fileName != null) {
 						if (option.equals("replace"))
 							red.clearAirports();
-						
+
 						BufferedReader br = new BufferedReader(new InputStreamReader(fileName));
 
 						while ((strLine = br.readLine()) != null) {
@@ -89,7 +89,7 @@ public class Test {
 					String departure = checkDeparture(c[5]);
 					String duration = checkDuration(c[6]);
 					Double price = checkPrice(c[7]);
-					
+
 					red.addFlight(air, number, days, from, to, departure, duration, price);
 				} else {
 					System.out.println(
@@ -108,7 +108,7 @@ public class Test {
 						BufferedReader br = new BufferedReader(new InputStreamReader(fileName));
 						if (option.equals("replace"))
 							red.clearFlights();
-						
+
 						while ((strLine = br.readLine()) != null) {
 							String[] str = strLine.split("#");
 							if (str.length == 8) {
@@ -120,7 +120,7 @@ public class Test {
 								String departure = checkDeparture(str[5]);
 								String duration = checkDuration(str[6]);
 								Double price = checkPrice(str[7]);
-								
+
 								red.addFlight(air, number, days, from, to, departure, duration, price);
 							}
 						}
@@ -152,11 +152,11 @@ public class Test {
 					String to = checkName(c[1]);
 					String priority = checkPriority(c[2]);
 					List<String> days;
-					if(c.length == 4)
+					if (c.length == 4)
 						days = checkDays(c[3]);
 					else
 						days = new LinkedList<String>();
-					
+
 					if (typeFormat != null && outputFormat != null)
 						red.findRoute(from, to, priority, days, typeFormat, outputFormat);
 					else
@@ -174,7 +174,8 @@ public class Test {
 					if (output != null && type != null) {
 						typeFormat = type;
 						outputFormat = output;
-						System.out.println("Format established: Type format is " + typeFormat + " and output format is " + outputFormat + '\n');
+						System.out.println("Format established: Type format is " + typeFormat + " and output format is "
+								+ outputFormat + '\n');
 					} else {
 						System.out.println("Invalid command: At least one parameter is not respecting the format");
 					}
@@ -197,12 +198,12 @@ public class Test {
 					System.out.println(
 							"Invalid Command: You are inserting a different amount of parameters than the required");
 				}
-			} else if(command.equals("network current status")){
+			} else if (command.equals("network current status")) {
 				red.printNetwork();
 			} else {
 				System.out.println("Invalid Command: It does not exist");
 			}
-			
+
 		}
 
 		scan.close();
