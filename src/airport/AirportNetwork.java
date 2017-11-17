@@ -1,4 +1,3 @@
-
 package airport;
 
 import java.io.IOException;
@@ -138,10 +137,12 @@ public class AirportNetwork {
 			System.out.println("Aiport: " + a.name);
 			for (Flight f : a.flights) {
 				System.out.println("Flight: " + f.numberOfFlight + " - Airline: " + f.airline + " - From: "
-						+ f.from.name + " - To: " + f.to.name);
+						+ f.from.name + " - To: " + f.to.name + " - Price: " + f.price);
 			}
 			System.out.println();
 		}
+		
+		System.out.println(airports.size());
 	}
 
 	public void addAirport(String name, Double latitude, Double length) {
@@ -191,7 +192,7 @@ public class AirportNetwork {
 				}
 			}
 		}
-		
+
 		System.out.println("The airport " + name + " has been removed from our network");
 		airports.remove(airport);
 		map.remove(name);
@@ -284,12 +285,13 @@ public class AirportNetwork {
 				Flight f = iter.next();
 				if (f.numberOfFlight == number && f.airline.equals(air)) {
 					iter.remove();
-					System.out.println("The flight " + f.numberOfFlight + " of " + f.airline + " has been removed from our network");
+					System.out.println("The flight " + f.numberOfFlight + " of " + f.airline
+							+ " has been removed from our network");
 					return;
 				}
 			}
 		}
-		
+
 		System.out.println("The flight " + number + " of " + air + " that you are trying to remove does not exist");
 	}
 
@@ -988,7 +990,13 @@ public class AirportNetwork {
 			System.out.println("Invalid command: At least one parameter is not respecting the format");
 			return;
 		} else {
-
+			if(priority.equals("pr"))
+				priority="Price";
+			if(priority.equals("tt"))
+				priority="totalDuration";
+			if(priority.equals("ft"))
+				priority="Duration";
+			worldTripEfficient(from, priority, days, typeFormat, outputFormat);
 		}
 	}
 
@@ -1006,15 +1014,15 @@ public class AirportNetwork {
 	private void worldTripEfficient(String initial, String priority, List<String> days, String typeFormat,
 			String outputFormat) throws IOException {
 		clearMarks();
-		if (!this.isStronglyConnected(initial)){
+		if (!this.isStronglyConnected(initial)) {
 			System.out.println("There is not a hamiltonian cycle");
 			return;
 		}
 		clearMarks();
-		if (this.areCutVertex()){
+		if (this.areCutVertex()) {
 			System.out.println("There is not a hamiltonian cycle");
 			return;
-		}	
+		}
 		HamiltonCicle result = new HamiltonCicle(0, 0, "Lu");
 		if (priority == "totalDuration") {
 			for (int i = 0; i < days.size(); i++) {
@@ -1022,13 +1030,28 @@ public class AirportNetwork {
 				substractExtraTime(current);
 				if (!isPassed(result, current, priority))
 					result = current;
-				if(result.flightDuration == 0)
+				if (result.flightDuration == 0)
 					System.out.println("There is not a hamiltonian cycle");
 			}
 		} else
 			result = worldTripEfficient(initial, priority, days.get(0));
-			if(result.flightDuration == 0)
-				System.out.println("There is not a hamiltonian cycle");
+
+		System.out.println("Hamiltoniano eficiente:");
+		for (Flight edge : result.flights) {
+			System.out.print(edge.from.name + " -> ");
+		}
+
+		if (priority == "Price") {
+			System.out.print("  Price: " + result.price);
+		}
+		if (priority == "Duration") {
+			System.out.print("  Duration " + result.flightDuration);
+		} else {
+			System.out.print("  TotalDuration: " + result.totalDuration);
+		}
+
+		if (result.flightDuration == 0)
+			System.out.println("There is not a hamiltonian cycle");
 
 		if (typeFormat.equals("text")) {
 			if (outputFormat.equals("stdout")) {
