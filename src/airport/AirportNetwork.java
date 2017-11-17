@@ -1026,7 +1026,7 @@ public class AirportNetwork {
 		HamiltonCicle result = new HamiltonCicle(0, 0, "Lu");
 		if (priority == "totalDuration") {
 			for (int i = 0; i < days.size(); i++) {
-				HamiltonCicle current = worldTripEfficient(initial, priority, days.get(i));
+				HamiltonCicle current = worldTripEfficient(initial, priority, days.get(i),days);
 				substractExtraTime(current);
 				if (!isPassed(result, current, priority))
 					result = current;
@@ -1034,7 +1034,7 @@ public class AirportNetwork {
 					System.out.println("There is not a hamiltonian cycle");
 			}
 		} else
-			result = worldTripEfficient(initial, priority, days.get(0));
+			result = worldTripEfficient(initial, priority, days.get(0), days);
 
 		System.out.println("Hamiltoniano eficiente:");
 		for (Flight edge : result.flights) {
@@ -1093,12 +1093,12 @@ public class AirportNetwork {
 	 * @return Retorna el mejor ciclo segun la prioridad pedida
 	 */
 
-	private HamiltonCicle worldTripEfficient(String initial, String priority, String day) {
+	private HamiltonCicle worldTripEfficient(String initial, String priority, String day, List<String> days) {
 		clearMarks();
 		HamiltonCicle hamiltonCicle = new HamiltonCicle(0, 0, day);
 		HamiltonCicle current = new HamiltonCicle(0, 0, day);
 		hamiltonCicle = getHamiltonCiclesEfficient(this.map.get(initial), this.map.get(initial), 1, hamiltonCicle,
-				current, null, priority);
+				current, null, priority,days);
 		return hamiltonCicle;
 	}
 
@@ -1123,7 +1123,7 @@ public class AirportNetwork {
 	 */
 
 	private HamiltonCicle getHamiltonCiclesEfficient(Airport initial, Airport current, int nodesCount,
-			HamiltonCicle efficient, HamiltonCicle currentList, Flight connection, String priority) {
+			HamiltonCicle efficient, HamiltonCicle currentList, Flight connection, String priority, List<String> days) {
 		if (isPassed(efficient, currentList, priority)) {
 			return efficient;
 		}
@@ -1169,9 +1169,9 @@ public class AirportNetwork {
 		for (Flight edge : current.flights) {
 			if ((((edge.to.visited != true || (edge.to == initial && nodesCount == this.airports.size()))
 					&& !visited.contains(edge.to)))) {
-				edge = existBetterFlight(current, edge.to, priority, currentList);
+				edge = existBetterFlight(current, edge.to, priority, currentList,days,initial);
 				efficient = getHamiltonCiclesEfficient(initial, edge.to, nodesCount + 1, efficient, currentList, edge,
-						priority);
+						priority,days);
 				visited.add(edge.to);
 			}
 		}
@@ -1240,21 +1240,41 @@ public class AirportNetwork {
 	 *            Ciclo que se esta construyendo
 	 * @return el mejor vuelo, en funcion de la prioridad, entre inicio y destino
 	 */
-	private Flight existBetterFlight(Airport start, Airport end, String priority, HamiltonCicle current) {
+	private Flight existBetterFlight(Airport start, Airport end, String priority, HamiltonCicle current, List<String> days, Airport initial) {
 		Flight result = new Flight();
 		result.price = 0;
 		result.hourOfDeparture = 0;
 		result.minuteOfDeparture = 0;
 		for (Flight edge : start.flights) {
 			if (edge.to == end) {
-				if (checkPriority(result, edge, priority, current))
-					result = edge;
+				if(start == initial) {
+					if(flightContainsDays(edge,days))
+						if (checkPriority(result, edge, priority, current))
+							result = edge;
+				}
+				else {
+					if (checkPriority(result, edge, priority, current))
+						result = edge;
+				}
+					
 			}
 		}
+		
+		if(result.price == 0)
+			return null;
 
 		return result;
 	}
-
+	
+	/**
+	 ** Revisa que el vuelo pueda comenzar en ese dia
+	 **/
+	private boolean flightContainsDays(Flight flight, List<String> days) {
+		for(String daysFlight: flight.daysDeparture)
+			if(days.contains(daysFlight))
+				return true;
+		return false;
+	}
 	/**
 	 * 
 	 * @param result
