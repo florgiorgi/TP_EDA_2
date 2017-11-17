@@ -174,7 +174,7 @@ public class Test {
 					if (output != null && type != null) {
 						typeFormat = type;
 						outputFormat = output;
-						System.out.println("Format established: Type format is " + typeFormat + " and output format is " + outputFormat);
+						System.out.println("Format established: Type format is " + typeFormat + " and output format is " + outputFormat + '\n');
 					} else {
 						System.out.println("Invalid command: At least one parameter is not respecting the format");
 					}

@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.PriorityQueue;
 
-public class AirportNetwork {
+public class AirportNetwork<V>{
 
 	private List<Airport> airports;
 	private Map<String, Airport> map;
@@ -26,14 +26,12 @@ public class AirportNetwork {
 		private double latitude;
 		private double length;
 		private List<Flight> flights;
-		private int tag; // Chequear si esta bien que esten aca
 		private boolean visited;
 
 		public Airport(String name, double latitude, double length) {
 			this.name = name;
 			this.latitude = latitude;
 			this.length = length;
-			this.tag = 0;
 			this.visited = false;
 			this.flights = new ArrayList<Flight>();
 		}
@@ -141,7 +139,7 @@ public class AirportNetwork {
 			}
 			System.out.println();
 		}
-		
+
 		System.out.println(airports.size());
 	}
 
@@ -253,9 +251,6 @@ public class AirportNetwork {
 			return;
 		}
 
-		// System.out.println("Connecting: " + from + " -> " + to + " Duration of
-		// flight: " + dH + "hours " + dM + "minutes " + "Price: " + p + " Days: " +
-		// days.get(0) + "-" +days.get(1) + "Departure: " + hod + ":" + mod);
 		for (Airport a : airports) {
 			for (Flight flight : a.flights) {
 				if (flight.airline.equals(air) && flight.numberOfFlight == number) {
@@ -302,12 +297,12 @@ public class AirportNetwork {
 			System.out.println("Invalid command: At least one parameter is not respecting the format");
 			return;
 		}
-		List<PQNode> nodes = findRoute(this.map.get(from), this.map.get(to), priority, days, type, output);
+		List<PQNode<V>> nodes = findRoute(this.map.get(from), this.map.get(to), priority, days, type, output);
 		if (nodes == null) {
 			System.out.println("Not found");
 		} else if (type.equals("KML")) {
 			Map<String, List<Double>> route = new LinkedHashMap<>();
-			for (PQNode node : nodes) {
+			for (PQNode<V> node : nodes) {
 				List<Double> aux = new ArrayList<>();
 				aux.add(node.airport.latitude);
 				aux.add(node.airport.length);
@@ -342,7 +337,7 @@ public class AirportNetwork {
 	// A este metodo hay que llamarlo con los datos ya en sus respectivas clases
 	// (Me refiero a pasar el string de aeropuertos a la clase Airport)
 	// Y a cada uno de los dias ponerlos en un ArrayList
-	private List<PQNode> findRoute(Airport from, Airport to, String priority, List<String> days, String type,
+	private List<PQNode<V>> findRoute(Airport from, Airport to, String priority, List<String> days, String type,
 			String output) throws NoSuchFieldException, SecurityException, IllegalArgumentException,
 			IllegalAccessException, IOException {
 
@@ -351,18 +346,18 @@ public class AirportNetwork {
 		}
 		clearMarks();
 
-		PriorityQueue<PQNode> pq = new PriorityQueue<>();
-		List<PQNode> ls = new ArrayList<>();
+		PriorityQueue<PQNode<V>> pq = new PriorityQueue<>();
+		List<PQNode<V>> ls = new ArrayList<>();
 
-		pq.offer(new PQNode(from, 0, 0, 0, 0, null, "", new ArrayList<>()));
+		pq.offer(new PQNode<V>(from, 0, 0, 0, 0, null, "", new ArrayList<>()));
 
 		while (!pq.isEmpty()) {
-			PQNode aux = pq.poll();
+			PQNode<V> aux = pq.poll();
 			if (aux.airport.equals(to)) {
 				aux.ls.add(aux);
 				if (type.equals("text")) {
 					if (output.equals("stdout"))
-						aux.printPQ();
+						System.out.println(aux);
 					else {
 						List<String> lines = Arrays.asList(aux.toString());
 						Path file = Paths.get(output);
@@ -387,38 +382,38 @@ public class AirportNetwork {
 
 							if (priority.equals("ft")) {
 								if (aux.flight != null)
-									pq.offer(new PQNode(f.to, aux.weight + f.durationHours * 60 + f.durationMinutes,
+									pq.offer(new PQNode<V>(f.to, aux.weight + f.durationHours * 60 + f.durationMinutes,
 											aux.price + f.price,
 											aux.flightTime + f.durationHours * 60 + f.durationMinutes,
 											aux.totalTime + getTimeDiference(aux.flight, aux.currentDay, f, day), f,
 											day, ls));
 								else {
-									pq.offer(new PQNode(f.to, aux.weight + f.durationHours * 60 + f.durationMinutes,
+									pq.offer(new PQNode<V>(f.to, aux.weight + f.durationHours * 60 + f.durationMinutes,
 											aux.price + f.price,
 											aux.flightTime + f.durationHours * 60 + f.durationMinutes,
 											aux.totalTime + f.durationHours * 60 + f.durationMinutes, f, day, ls));
 								}
 							} else if (priority.equals("pr")) {
 								if (aux.flight != null)
-									pq.offer(new PQNode(f.to, aux.weight + f.price, aux.price + f.price,
+									pq.offer(new PQNode<V>(f.to, aux.weight + f.price, aux.price + f.price,
 											aux.flightTime + f.durationHours * 60 + f.durationMinutes,
 											aux.totalTime + getTimeDiference(aux.flight, aux.currentDay, f, day), f,
 											day, ls));
 								else
-									pq.offer(new PQNode(f.to, aux.weight + f.price, aux.price + f.price,
+									pq.offer(new PQNode<V>(f.to, aux.weight + f.price, aux.price + f.price,
 											aux.flightTime + f.durationHours * 60 + f.durationMinutes,
 											aux.totalTime + f.durationHours * 60 + f.durationMinutes, f, day, ls));
 
 							} else {
 								if (aux.flight != null)
-									pq.offer(new PQNode(f.to,
+									pq.offer(new PQNode<V>(f.to,
 											aux.weight + getTimeDiference(aux.flight, aux.currentDay, f, day),
 											aux.price + f.price,
 											aux.flightTime + f.durationHours * 60 + f.durationMinutes,
 											aux.totalTime + getTimeDiference(aux.flight, aux.currentDay, f, day), f,
 											day, ls));
 								else
-									pq.offer(new PQNode(f.to,
+									pq.offer(new PQNode<V>(f.to,
 											aux.weight + aux.totalTime + f.durationHours * 60 + f.durationMinutes,
 											aux.price + f.price,
 											aux.flightTime + f.durationHours * 60 + f.durationMinutes,
@@ -609,12 +604,11 @@ public class AirportNetwork {
 	}
 
 	public void clearMarks() {
-		for (Airport a : airports) {
-			a.tag = 0;
+		for (Airport a : airports) 
 			a.visited = false;
-		}
 	}
 
+	@SuppressWarnings("hiding")
 	private class PQNode<V> implements Comparable<PQNode<V>> {
 		Airport airport;
 		double weight; // Es el criterio q vamos a usar
@@ -623,14 +617,14 @@ public class AirportNetwork {
 		double totalTime; // Tiempo total de viaje
 		String currentDay;
 		Flight flight; // Son los vuelos que tiene acumulado ese nodo
-		List<PQNode> ls;
+		List<PQNode<V>> ls;
 
-		public int compareTo(PQNode other) {
+		public int compareTo(PQNode<V> other) {
 			return Double.valueOf(weight).compareTo(other.weight);
 		}
 
 		public PQNode(Airport a, double weight, double price, double flightTime, double totalTime, Flight f,
-				String currentDay, List<PQNode> ls) {
+				String currentDay, List<PQNode<V>> ls) {
 			this.airport = a;
 			this.weight = weight;
 			this.price = price;
@@ -639,22 +633,6 @@ public class AirportNetwork {
 			this.flight = f;
 			this.currentDay = currentDay;
 			this.ls = ls;
-		}
-
-		private void printPQ() {
-			System.out.println("Precio#" + this.price);
-			System.out.println("TiempoVuelo#" + (int) this.flightTime / 60 + "h" + (int) this.flightTime % 60 + "m");
-			System.out
-					.println("TiempoTotal#" + (int) this.totalTime / 60 + "h" + (int) this.totalTime % 60 + "m" + '\n');
-
-			for (PQNode pq : ls) {
-
-				if (pq.flight != null)
-					System.out.println(pq.flight.from.name + "#" + pq.flight.airline + "#" + pq.flight.numberOfFlight
-							+ "#" + pq.currentDay + "#" + pq.flight.to.name + "");
-
-			}
-
 		}
 
 		@Override
@@ -668,12 +646,10 @@ public class AirportNetwork {
 			ans.append('\n');
 			ans.append('\n');
 
-			for (PQNode pq : ls) {
-
+			for (PQNode<V> pq : ls) {
 				if (pq.flight != null)
 					ans.append(pq.flight.from.name + "#" + pq.flight.airline + "#" + pq.flight.numberOfFlight + "#"
 							+ pq.currentDay + "#" + pq.flight.to.name + '\n');
-				ans.append('\n');
 			}
 
 			return ans.toString();
@@ -693,7 +669,6 @@ public class AirportNetwork {
 		for (int i = 0; i < this.airports.size(); i++) {
 			clearMarks();
 			if (!canReach(this.airports.get(i), this.map.get(initial))) {
-				// System.out.println("Retorne false con: " + this.airports.get(i));
 				return false;
 			}
 		}
@@ -760,10 +735,10 @@ public class AirportNetwork {
 	public boolean areCutVertex() {
 		int index;
 		clearMarks();
-		AirportNetwork notDirected = new AirportNetwork();
+		AirportNetwork<V> notDirected = new AirportNetwork<V>();
 		for (int i = 0; i < this.airports.size(); i++) {
 			Airport current = this.airports.get(i);
-			notDirected.addAirport(current.name, current.latitude, current.length);
+			notDirected.addAirportNotDirected(current.name, current.latitude, current.length);
 		}
 		notDirected.createNotDirected(this.airports.get(0));
 		for (int visited = 0; visited < notDirected.airports.size(); visited++) {
@@ -775,6 +750,14 @@ public class AirportNetwork {
 				return true;
 		}
 		return false;
+	}
+
+	private void addAirportNotDirected(String name, double latitude, double length) {
+
+		Airport a = new Airport(name, latitude, length);
+		this.airports.add(a);
+		this.map.put(name, a);
+
 	}
 
 	/**
@@ -804,14 +787,44 @@ public class AirportNetwork {
 	private void createNotDirected(Airport current) {
 		current.visited = true;
 		for (Flight edge : current.flights) {
-			this.addFlight(edge.airline, edge.numberOfFlight, edge.daysDeparture, edge.from.name, edge.to.name, "12:00",
-					"12h14m", edge.price);
-			this.addFlight(edge.airline, -edge.numberOfFlight, edge.daysDeparture, edge.to.name, edge.from.name,
-					"12:00", "12h14m", edge.price);
+			this.addFlightNotDirected(edge.airline, edge.numberOfFlight, edge.daysDeparture, edge.from.name,
+					edge.to.name, "12:00", "12h14m", edge.price);
+			this.addFlightNotDirected(edge.airline, -edge.numberOfFlight, edge.daysDeparture, edge.to.name,
+					edge.from.name, "12:00", "12h14m", edge.price);
 			if (edge.to.visited != true) {
 				createNotDirected(edge.to);
 			}
 		}
+	}
+
+	private void addFlightNotDirected(String air, Integer number, List<String> days, String from, String to,
+			String departure, String duration, Double p) {
+
+		String[] dep = departure.split(":");
+		String dH;
+		String dM;
+
+		if (duration.contains("h")) {
+			dH = duration.substring(0, duration.indexOf("h"));
+			dM = duration.substring(duration.indexOf("h") + 1, duration.indexOf("m"));
+		} else {
+			dH = "0";
+			dM = duration.substring(0, duration.indexOf("m"));
+		}
+
+		addNotDirected(air, number, days, from, to, Integer.parseInt(dep[0]), Integer.parseInt(dep[1]), Integer.parseInt(dM),
+				Integer.parseInt(dH), p);
+
+	}
+
+	private void addNotDirected(String air, int number, List<String> days, String from, String to, int hod, int mod,
+			int dM, int dH, double p) {
+
+		Airport f = this.map.get(from);
+		Airport t = this.map.get(to);
+
+		Flight newFlight = new Flight(air, number, days, f, t, hod, mod, dM, dH, p);
+		f.flights.add(newFlight);
 	}
 
 	/**
@@ -990,12 +1003,12 @@ public class AirportNetwork {
 			System.out.println("Invalid command: At least one parameter is not respecting the format");
 			return;
 		} else {
-			if(priority.equals("pr"))
-				priority="Price";
-			if(priority.equals("tt"))
-				priority="totalDuration";
-			if(priority.equals("ft"))
-				priority="Duration";
+			if (priority.equals("pr"))
+				priority = "Price";
+			if (priority.equals("tt"))
+				priority = "totalDuration";
+			if (priority.equals("ft"))
+				priority = "Duration";
 			worldTripEfficient(from, priority, days, typeFormat, outputFormat);
 		}
 	}
@@ -1026,7 +1039,7 @@ public class AirportNetwork {
 		HamiltonCicle result = new HamiltonCicle(0, 0, "Lu");
 		if (priority == "totalDuration") {
 			for (int i = 0; i < days.size(); i++) {
-				HamiltonCicle current = worldTripEfficient(initial, priority, days.get(i),days);
+				HamiltonCicle current = worldTripEfficient(initial, priority, days.get(i), days);
 				substractExtraTime(current);
 				if (!isPassed(result, current, priority))
 					result = current;
@@ -1035,20 +1048,6 @@ public class AirportNetwork {
 			}
 		} else
 			result = worldTripEfficient(initial, priority, days.get(0), days);
-
-		System.out.println("Hamiltoniano eficiente:");
-		for (Flight edge : result.flights) {
-			System.out.print(edge.from.name + " -> ");
-		}
-
-		if (priority == "Price") {
-			System.out.print("  Price: " + result.price);
-		}
-		if (priority == "Duration") {
-			System.out.print("  Duration " + result.flightDuration);
-		} else {
-			System.out.print("  TotalDuration: " + result.totalDuration);
-		}
 
 		if (result.flightDuration == 0)
 			System.out.println("There is not a hamiltonian cycle");
@@ -1098,7 +1097,7 @@ public class AirportNetwork {
 		HamiltonCicle hamiltonCicle = new HamiltonCicle(0, 0, day);
 		HamiltonCicle current = new HamiltonCicle(0, 0, day);
 		hamiltonCicle = getHamiltonCiclesEfficient(this.map.get(initial), this.map.get(initial), 1, hamiltonCicle,
-				current, null, priority,days);
+				current, null, priority, days);
 		return hamiltonCicle;
 	}
 
@@ -1169,10 +1168,10 @@ public class AirportNetwork {
 		for (Flight edge : current.flights) {
 			if ((((edge.to.visited != true || (edge.to == initial && nodesCount == this.airports.size()))
 					&& !visited.contains(edge.to)))) {
-				edge = existBetterFlight(current, edge.to, priority, currentList,days,initial);
-				if(edge != null) {
-					efficient = getHamiltonCiclesEfficient(initial, edge.to, nodesCount + 1, efficient, currentList, edge,
-							priority,days);
+				edge = existBetterFlight(current, edge.to, priority, currentList, days, initial);
+				if (edge != null) {
+					efficient = getHamiltonCiclesEfficient(initial, edge.to, nodesCount + 1, efficient, currentList,
+							edge, priority, days);
 					visited.add(edge.to);
 				}
 			}
@@ -1242,41 +1241,42 @@ public class AirportNetwork {
 	 *            Ciclo que se esta construyendo
 	 * @return el mejor vuelo, en funcion de la prioridad, entre inicio y destino
 	 */
-	private Flight existBetterFlight(Airport start, Airport end, String priority, HamiltonCicle current, List<String> days, Airport initial) {
+	private Flight existBetterFlight(Airport start, Airport end, String priority, HamiltonCicle current,
+			List<String> days, Airport initial) {
 		Flight result = new Flight();
 		result.price = 0;
 		result.hourOfDeparture = 0;
 		result.minuteOfDeparture = 0;
 		for (Flight edge : start.flights) {
 			if (edge.to == end) {
-				if(start == initial) {
-					if(flightContainsDays(edge,days))
+				if (start == initial) {
+					if (flightContainsDays(edge, days))
 						if (checkPriority(result, edge, priority, current))
 							result = edge;
-				}
-				else {
+				} else {
 					if (checkPriority(result, edge, priority, current))
 						result = edge;
 				}
-					
+
 			}
 		}
-		
-		if(result.price == 0)
+
+		if (result.price == 0)
 			return null;
 
 		return result;
 	}
-	
+
 	/**
 	 ** Revisa que el vuelo pueda comenzar en ese dia
 	 **/
 	private boolean flightContainsDays(Flight flight, List<String> days) {
-		for(String daysFlight: flight.daysDeparture)
-			if(days.contains(daysFlight))
+		for (String daysFlight : flight.daysDeparture)
+			if (days.contains(daysFlight))
 				return true;
 		return false;
 	}
+
 	/**
 	 * 
 	 * @param result
@@ -1379,7 +1379,6 @@ public class AirportNetwork {
 					ans.append(f.from.name + "#" + f.airline + "#" + f.numberOfFlight + "#" + daysDeparture.get(i) + "#"
 							+ f.to.name + '\n');
 				i++;
-				ans.append('\n');
 			}
 
 			return ans.toString();
